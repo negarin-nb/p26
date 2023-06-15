@@ -28,6 +28,7 @@ import Support from "./profile/support";
 import ProfileInfo from "./profile/profileInfo";
 import Ads from "./profile/ads";
 import ProductDetail from "./pages/productDetail";
+import Header from "./components/header";
 
 function App() {
   // Create rtl cache
