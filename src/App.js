@@ -29,6 +29,7 @@ import ProfileInfo from "./profile/profileInfo";
 import Ads from "./profile/ads";
 import ProductDetail from "./pages/productDetail";
 import Header from "./components/header";
+import { AuthProvider } from "./contex/authContext";
 
 function App() {
   // Create rtl cache
@@ -39,36 +40,38 @@ function App() {
   return (
     <div className="App">
       <Container>
-        <CacheProvider value={cacheRtl}>
-          <ThemeProvider theme={theme}>
-            <BrowserRouter>
-              <Routes>
-                <Route index element={<Home />} />
-                <Route path="products" element={<Products />} />
-                <Route path="price" element={<Price />} />
-                <Route path="contact" element={<Contact />} />
-                <Route path="about" element={<About />} />
-                <Route path="login" element={<Login />} />
-                <Route path="register" element={<Register />} />
-                <Route path="product-detail" element={<ProductDetail />} />
-                <Route path="profile" element={<Profile />}>
-                  <Route index element={<Dashboard />} />
-                  <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="marked" element={<Marked />} />
-                  <Route path="subscription" element={<Subscription />} />
-                  <Route path="ads" element={<Ads />} />
-                  <Route path="insert-ad" element={<AdInsert />} />
-                  <Route path="support" element={<Support />} />
-                  <Route path="profile-info" element={<ProfileInfo />} />
-                </Route>
-                <Route path="profile/insert-ad" element={<AdInsert />} />
-                <Route path="home" element={<HomeLogedin />} />
-                <Route path="*" element={<NoPage />} />
-                <Route path="/" element={<Home />} />
-              </Routes>
-            </BrowserRouter>
-          </ThemeProvider>
-        </CacheProvider>
+        <AuthProvider>
+          <CacheProvider value={cacheRtl}>
+            <ThemeProvider theme={theme}>
+              <BrowserRouter>
+                <Routes>
+                  <Route index element={<Home />} />
+                  <Route path="products" element={<Products />} />
+                  <Route path="price" element={<Price />} />
+                  <Route path="contact" element={<Contact />} />
+                  <Route path="about" element={<About />} />
+                  <Route path="login" element={<Login />} />
+                  <Route path="register" element={<Register />} />
+                  <Route path="product-detail" element={<ProductDetail />} />
+                  <Route path="profile" element={<Profile />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="marked" element={<Marked />} />
+                    <Route path="subscription" element={<Subscription />} />
+                    <Route path="ads" element={<Ads />} />
+                    <Route path="insert-ad" element={<AdInsert />} />
+                    <Route path="support" element={<Support />} />
+                    <Route path="profile-info" element={<ProfileInfo />} />
+                  </Route>
+                  <Route path="profile/insert-ad" element={<AdInsert />} />
+                  <Route path="home" element={<Home />} />
+                  <Route path="*" element={<NoPage />} />
+                  <Route path="/" element={<Home />} />
+                </Routes>
+              </BrowserRouter>
+            </ThemeProvider>
+          </CacheProvider>
+        </AuthProvider>
       </Container>
     </div>
   );

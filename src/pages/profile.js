@@ -2,9 +2,14 @@ import React from "react";
 import HeaderLogedin from "../components/headerLogedin";
 import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import authApi from "../api/auth";
+import auth from "../api/auth";
+import { useAuth } from "../contex/authContext";
 
 export default function Profile() {
+  const authCtx = useAuth();
+  const navigate = useNavigate();
   const ContainerStyle = {
     marginTop: "20px",
     marginBottom: "50px",
@@ -155,7 +160,13 @@ export default function Profile() {
                 />
               </Stack>
               <Stack direction="row" sx={PositionStyle}>
-                <Box>
+                <Box
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => {
+                    authCtx.logout();
+                    navigate("/");
+                  }}
+                >
                   <Typography variant="body1">خروج از حساب</Typography>
                 </Box>
                 <img

@@ -10,27 +10,26 @@ import {
   Stack,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import AdCard from '../components/adCard';
-import Header from '../components/header';
-import Girder from '../assets/svgIcons/girder';
-import Dots from '../assets/svgIcons/dots';
+import AdCard from "../components/adCard";
+import Header from "../components/header";
+import Girder from "../assets/svgIcons/girder";
+import Dots from "../assets/svgIcons/dots";
 import HomeButton from "../components/homeButton";
-import Pipe from '../assets/svgIcons/pipe';
-import Profile from '../assets/svgIcons/profile';
-import Reba from '../assets/svgIcons/reba';
-import Steel from '../assets/svgIcons/steel';
-import Stud from '../assets/svgIcons/stud';
-import Corner from '../assets/svgIcons/corner';
+import Pipe from "../assets/svgIcons/pipe";
+import Profile from "../assets/svgIcons/profile";
+import Reba from "../assets/svgIcons/reba";
+import Steel from "../assets/svgIcons/steel";
+import Stud from "../assets/svgIcons/stud";
+import Corner from "../assets/svgIcons/corner";
 export default function Home() {
-
   const svgIconStyle = {
     color: "primary.main",
     transition: "0.3s",
-    fontSize:{
-      sx:30,
-      sm:35,
-      lg:40
-    }
+    fontSize: {
+      sx: 30,
+      sm: 35,
+      lg: 40,
+    },
   };
 
   const buttonIcons = [
@@ -75,7 +74,7 @@ export default function Home() {
       title: "سایر",
     },
   ];
-  
+
   return (
     <Box>
       <Header />
@@ -131,15 +130,6 @@ export default function Home() {
           ))}
         </Stack>
       </Stack>
-
-      <Container>
-        <Typography variant="h1">سلام</Typography>
-        <Typography variant="h2">سلام</Typography>
-        <Typography variant="h3">سلام</Typography>
-        <Typography variant="h4">سلام</Typography>
-        <Typography variant="h5">سلام</Typography>
-        <Typography variant="h6">سلام</Typography>
-      </Container>
     </Box>
   );
 }
