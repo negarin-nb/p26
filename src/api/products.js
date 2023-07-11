@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const products = [
   {
     _id: "  01",
@@ -83,4 +85,16 @@ const products = [
 
 export function getProducts() {
   return products;
+}
+
+export function createProduct(productData) {
+  return axios.post("http://p26.ir/products/product/", {
+    title: productData.title,
+    description: productData.description,
+    link: productData.link,
+    tel: productData.tel,
+    factory: productData.factory,
+    price: productData.price,
+    category_id: productData.id,
+  });
 }

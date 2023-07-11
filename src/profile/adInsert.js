@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   TextField,
   Button,
@@ -6,9 +6,32 @@ import {
   Typography,
   Stack,
   Grid,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
+import subscrptionApi from "../api/subscrption";
 
-export default function adInsert() {
+export default function AdInsert() {
+  const productList = [
+    "تیرآهن",
+    "میلگرد",
+    "ورق",
+    "لوله",
+    "پروفیل",
+    "نبشی و ناودانی",
+    "تجهیزات",
+    "سیم و کابل",
+    "استیل",
+    "گریتینگ و تسمه",
+    "محصولات مفتولی",
+    "فلزات غیرآهنی",
+    "پشم شیشه",
+    "پشم سنگ",
+    "اتصالات",
+  ];
+  const [productName, setProductName] = useState("");
   const titleStyle = {
     marginBlock: "20px",
     textAlign: "left",
@@ -16,7 +39,7 @@ export default function adInsert() {
 
   const inputStyle = {
     justifyContent: "flex-start",
-    "& .MuiTextField-root": {
+    "& .MuiFormControl-root": {
       paddingBottom: "10px",
       fontSize: "10px",
     },
@@ -42,7 +65,28 @@ export default function adInsert() {
         <Grid sx={inputStyle} dir="rtl" container spacing={2}>
           <Grid container item xs={6} direction="column">
             <TextField fullWidth label="عنوان" variant="outlined" />
-            <TextField fullWidth label="محصول" variant="outlined" />
+            <FormControl fullWidth>
+              <InputLabel sx={{ color: "text.main" }} id="select-label">
+                محصول
+              </InputLabel>
+              <Select
+                sx={{ textAlign: "left" }}
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={productName}
+                label="محصول"
+                onChange={(event) => {
+                  setProductName(event.target.value);
+                }}
+              >
+                {productList.map((product) => (
+                  <MenuItem dir="rtl" value={product}>
+                    {product}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
             <TextField fullWidth label="دسته بندی" variant="outlined" />
             <TextField fullWidth label="تولیدکننده" variant="outlined" />
             <TextField fullWidth label="حالت" variant="outlined" />

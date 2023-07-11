@@ -13,7 +13,7 @@ export default function Profile() {
   const ContainerStyle = {
     marginTop: "20px",
     marginBottom: "50px",
-    padding: "20px",
+    padding: "10px",
     backgroundColor: "#F0F0F0",
   };
   const ColumnStyle = {
@@ -40,11 +40,11 @@ export default function Profile() {
   return (
     <>
       <HeaderLogedin />
-      <Divider sx={{ marginTop: "80px" }} />
+      <Divider sx={{ marginTop: "40px" }} />
       <Paper sx={ContainerStyle} elevation={5}>
         <Grid container sx={{}} spacing={0}>
           <Grid item xs={6} md={9} sx={{ paddingLeft: "5px", height: "100%" }}>
-            <Box sx={[ColumnStyle, { height: "528px", overflow: "auto" }]}>
+            <Box sx={[ColumnStyle, { height: "600px", overflow: "auto" }]}>
               <Outlet />
             </Box>
           </Grid>
@@ -70,7 +70,7 @@ export default function Profile() {
                 src={require("../assets/images/Profile.png")}
               />
             </Stack>
-            <Stack sx={[ColumnStyle, { height: "442px" }]}>
+            <Stack sx={[ColumnStyle, { height: "512px" }]}>
               <Stack
                 direction="row"
                 sx={PositionStyle}
