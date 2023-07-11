@@ -4,21 +4,21 @@ import apiUrl from "../config.json";
 import { useAuth } from "../contex/authContext";
 
 export function sendPhone(phone) {
-  return axios.post("http://p26.ir/users/SendVerificationCode/", {
+  return axios.post("http://api.p26.ir/users/SendVerificationCode/", {
     phone_number: phone,
     dev_mode: false,
   });
 }
 
 export function sendVerificationCode({ phone, otp }) {
-  return axios.post("http://p26.ir/users/CheckVerificationCode/", {
+  return axios.post("http://api.p26.ir/users/CheckVerificationCode/", {
     phone_number: phone,
     verification_code: otp,
   });
 }
 
 export function register({ phone, otp, register }) {
-  return axios.post("http://p26.ir/users/register/", {
+  return axios.post("http://api.p26.ir/users/register/", {
     phone_number: phone,
     verification_code: otp,
     password: register.password,
@@ -29,10 +29,14 @@ export function register({ phone, otp, register }) {
 }
 
 export function login(userData) {
-  return axios.post("http://p26.ir/users/login/", {
+  return axios.post("http://api.p26.ir/users/login/", {
     username: userData.username,
     password: userData.password,
   });
+}
+
+export function getJwt() {
+  return localStorage.getItem("token");
 }
 
 export default {
@@ -40,4 +44,5 @@ export default {
   sendPhone,
   sendVerificationCode,
   register,
+  getJwt,
 };
