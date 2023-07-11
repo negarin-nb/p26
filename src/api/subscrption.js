@@ -1,12 +1,11 @@
 import axios from "axios";
-import apiUrl from "../config.json";
 import http from "./http";
 import { getJwt } from "./auth";
-
+const apiUrl = "http://api.p26.ir";
 http.setJwt(getJwt());
 
 export function getPacks() {
-  return axios.get(`http://api.p26.ir/wallets/SubscriptionPacks/`);
+  return axios.get(`${apiUrl}/wallets/SubscriptionPacks/`);
 }
 
 export default { getPacks };
