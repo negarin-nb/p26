@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { styled } from "@mui/material/styles";
-
 import { Grid, Paper, Stack, Typography, Button, Divider } from "@mui/material";
+import subscrptionApi from "../api/subscrption";
 
 export default function Subscription() {
+  const fetchPacks = async () => {
+    const response = subscrptionApi.getPacks();
+    console.log(response.data);
+  };
+
+  useEffect(() => {
+    fetchPacks();
+  }, []);
   const iconStyle = {
     width: "20px",
   };
