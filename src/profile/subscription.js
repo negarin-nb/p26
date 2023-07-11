@@ -1,17 +1,31 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import { Grid, Paper, Stack, Typography, Button, Divider } from "@mui/material";
 import subscrptionApi from "../api/subscrption";
 
 export default function Subscription() {
+  const [adSubscription, setAdSubscription] = useState([]);
+  const [callSubscription, setCallSubscription] = useState([]);
+
   const fetchPacks = async () => {
-    const response = subscrptionApi.getPacks();
-    console.log(response.data);
+    const response = await subscrptionApi.getPacks();
+    console.log(response.data.ListItems);
+
+    setAdSubscription(
+      response.data.ListItems.filter((item) => item.type === 2)
+    );
+
+    setCallSubscription(
+      response.data.ListItems.filter((item) => item.type === 1)
+    );
+
+    // console.log(callSubscription);
   };
 
   useEffect(() => {
     fetchPacks();
   }, []);
+
   const iconStyle = {
     width: "20px",
   };
