@@ -1,14 +1,5 @@
-import React from "react";
-import {
-  Container,
-  Grid,
-  Typography,
-  Paper,
-  InputBase,
-  IconButton,
-  Box,
-  Stack,
-} from "@mui/material";
+import React, { useState } from "react";
+import { Paper, InputBase, IconButton, Box, Stack } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AdCard from "../components/adCard";
 import Header from "../components/header";
@@ -21,7 +12,18 @@ import Reba from "../assets/svgIcons/reba";
 import Steel from "../assets/svgIcons/steel";
 import Stud from "../assets/svgIcons/stud";
 import Corner from "../assets/svgIcons/corner";
+import { useNavigate } from "react-router-dom";
+
 export default function Home() {
+  const navigate = useNavigate();
+  const [searchInput, setSearchInput] = useState("");
+
+  const handleSubmitButton = () => {
+    navigate(`/results/${searchInput}`);
+  };
+  const handleSubmit = (e) => {
+    if (e.key === "Enter") navigate(`/results/${searchInput}`);
+  };
   const svgIconStyle = {
     color: "primary.main",
     transition: "0.3s",
@@ -107,7 +109,12 @@ export default function Home() {
             my: "50px",
           }}
         >
-          <IconButton type="button" sx={{ p: "4px" }} aria-label="search">
+          <IconButton
+            type="button"
+            sx={{ p: "4px" }}
+            aria-label="search"
+            onClick={handleSubmitButton}
+          >
             <SearchIcon sx={{ fontSize: 30 }} />
           </IconButton>
           <InputBase
@@ -117,6 +124,9 @@ export default function Home() {
             }}
             sx={{ mx: 1, flex: 1 }}
             placeholder="جستجو"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => handleSubmit(e)}
           />
         </Paper>
         <Stack

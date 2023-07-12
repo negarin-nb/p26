@@ -1,22 +1,23 @@
-import React, { useState } from "react";
-import {
-  IconButton,
-  InputBase,
-  Paper,
-  Stack,
-  Divider,
-  Tab,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import React, { useState, useEffect } from "react";
+import { Divider, Tab } from "@mui/material";
 import Header from "../components/header";
 import { getAds } from "../api/ads";
 import { styled } from "@mui/material/styles";
 import ListProducts from "../components/listProducts";
+import { useParams } from "react-router-dom";
+import searchApi from "../api/search";
 
-export default function Products() {
+export default function SearchResult() {
   const [ads, setAds] = useState(getAds());
   const [value, setValue] = React.useState("1");
-
+  const searchInput = useParams();
+  const fetchSearchResult = async () => {
+    const response = await searchApi.search(searchInput);
+    console.log(response.data);
+  };
+  useEffect(() => {
+    fetchSearchResult();
+  }, []);
   const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
     ({ theme }) => ({
       minWidth: 0,
@@ -42,8 +43,6 @@ export default function Products() {
   );
 
   const svgIconStyle = {
-    //color: "primary.main",
-    //transition: "0.3s",
     fontSize: 16,
   };
   const TabPanelStyle = {
@@ -58,32 +57,8 @@ export default function Products() {
   return (
     <div className="App">
       <Header />
-      <Stack sx={{ justifyContent: "center", alignItems: "center" }}>
-        <Paper
-          component="form"
-          elevation={3}
-          sx={{
-            p: "5px",
-            display: "flex",
-            alignItems: "center",
-            width: { xs: 300, sm: 450, md: 500, lg: 630 },
-            my: "50px",
-          }}
-        >
-          <IconButton type="button" sx={{ p: "2px" }} aria-label="search">
-            <SearchIcon sx={{ fontSize: { xs: 20, md: 25, lg: 30 } }} />
-          </IconButton>
-          <InputBase
-            inputProps={{
-              "aria-label": "search",
-              style: { textAlign: "right" },
-            }}
-            sx={{ mx: 1, flex: 1 }}
-            placeholder="جستجو"
-          />
-        </Paper>
-      </Stack>
-      <Divider sx={{ marginBottom: "30px" }} />
+
+      <Divider sx={{ my: "50px" }} />
 
       <ListProducts ads={ads} />
 

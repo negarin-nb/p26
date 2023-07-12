@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
-export default function ListProducts() {
+export default function ListProducts({ ads }) {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     backgroundColor: theme.palette.custom.main,
     color: theme.palette.primary.main,
@@ -51,7 +51,7 @@ export default function ListProducts() {
     marginBottom: "8px",
   };
 
-  const [products, setProducts] = useState(getProducts());
+  const [products, setProducts] = useState(ads);
 
   const [location, setLocation] = useState("");
   const [size, setSize] = useState("");

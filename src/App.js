@@ -30,6 +30,7 @@ import Ads from "./profile/ads";
 import ProductDetail from "./pages/productDetail";
 import Header from "./components/header";
 import { AuthProvider } from "./contex/authContext";
+import SearchResult from "./pages/searchResults";
 
 function App() {
   // Create rtl cache
@@ -46,6 +47,11 @@ function App() {
               <BrowserRouter>
                 <Routes>
                   <Route index element={<Home />} />
+
+                  <Route
+                    path="results/:searchInput"
+                    element={<SearchResult />}
+                  />
                   <Route path="products" element={<Products />} />
                   <Route path="price" element={<Price />} />
                   <Route path="contact" element={<Contact />} />
