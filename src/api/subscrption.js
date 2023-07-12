@@ -8,4 +8,15 @@ export function getPacks() {
   return axios.get(`${apiUrl}/wallets/SubscriptionPacks/`);
 }
 
-export default { getPacks };
+export function getWallet() {
+  return axios.get(`${apiUrl}/wallets/wallet/`);
+}
+
+export function buyPack(id) {
+  console.log(id);
+  return axios.post(`${apiUrl}/wallets/BuySubscription/`, {
+    pack_id: id,
+  });
+}
+
+export default { getPacks, buyPack, getWallet };
