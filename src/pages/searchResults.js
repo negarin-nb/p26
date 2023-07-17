@@ -10,7 +10,9 @@ import searchApi from "../api/search";
 export default function SearchResult() {
   const [ads, setAds] = useState(getAds());
   const [value, setValue] = React.useState("1");
+
   const searchInput = useParams();
+
   const fetchSearchResult = async () => {
     const response = await searchApi.search(searchInput);
     console.log(response.data);
@@ -18,6 +20,7 @@ export default function SearchResult() {
   useEffect(() => {
     fetchSearchResult();
   }, []);
+
   const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
     ({ theme }) => ({
       minWidth: 0,

@@ -228,7 +228,7 @@ export default function ListProducts({ ads }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product, index) => (
+            {ads.map((product, index) => (
               <StyldedTableRow key={index}>
                 <BodyTableCell>{PN.convertEnToPe(index + 1)}</BodyTableCell>
                 <BodyTableCell
@@ -246,9 +246,14 @@ export default function ListProducts({ ads }) {
                 <BodyTableCell>{product.updateDate}</BodyTableCell>
                 <BodyTableCell>
                   <Typography
+                    sx={{
+                      "&:hover": {
+                        color: "secondary.main",
+                      },
+                    }}
                     variant="h5"
                     component={Link}
-                    to={"/product-detail"}
+                    to={`/product-detail/${product.id}`}
                   >
                     ثبت سفارش
                   </Typography>

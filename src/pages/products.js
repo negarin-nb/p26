@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   IconButton,
   InputBase,
@@ -12,10 +12,20 @@ import Header from "../components/header";
 import { getAds } from "../api/ads";
 import { styled } from "@mui/material/styles";
 import ListProducts from "../components/listProducts";
+import productsApi from "../api/products";
 
 export default function Products() {
-  const [ads, setAds] = useState(getAds());
+  const [ads, setAds] = useState([]);
   const [value, setValue] = React.useState("1");
+
+  const fetchProducts = async () => {
+    const response = await productsApi.getProducts();
+    setAds(response.data.ListItems);
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
     ({ theme }) => ({
