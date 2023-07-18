@@ -1,5 +1,7 @@
 import React from "react";
-import { Stack, Typography, Link, Button } from "@mui/material";
+import { Stack, Typography, Button } from "@mui/material";
+import { Link } from "react-router-dom";
+
 export default function Dashboard() {
   const container = {
     height: "100%",
@@ -21,7 +23,7 @@ export default function Dashboard() {
           color="secondary"
           size="large"
           component={Link}
-          to="insert-ad"
+          to="/profile/insert-ad"
         >
           ثبت آگهی +
         </Button>

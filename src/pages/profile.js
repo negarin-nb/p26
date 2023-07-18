@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import HeaderLogedin from "../components/headerLogedin";
 import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -6,10 +6,42 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import authApi from "../api/auth";
 import auth from "../api/auth";
 import { useAuth } from "../contex/authContext";
+import { useProfile } from "../contex/profileContext";
+import profileApi from "../api/profile";
+import PN from "persian-number";
 
 export default function Profile() {
   const authCtx = useAuth();
   const navigate = useNavigate();
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const profileCtx = useProfile();
+  const fetchProfile = async () => {
+    const response = await profileApi.getProfile();
+    //  console.log(response.data);
+    const userData = {
+      firstName: response.data.Item.first_name,
+      lastName: response.data.Item.last_name,
+      email: response.data.Item.email,
+      address: "",
+      phoneNumber: response.data.Item.phone_number,
+      coTel: response.data.Item.co_tell,
+      coWebsite: response.data.Item.co_site,
+      coAdress: response.data.Item.co_address,
+      shopName: response.data.Item.shop_name,
+    };
+    const convert = PN.convertEnToPe(userData.phoneNumber);
+    setPhoneNumber(convert);
+    profileCtx.setProfile(userData);
+  };
+
+  useEffect(() => {
+    // console.log(profileCtx.userProfile);
+    if (!profileCtx.userProfile.shopName) {
+      fetchProfile();
+    } else phoneNumber(profileCtx.userProfile.phoneNumber);
+  }, []);
+
   const ContainerStyle = {
     marginTop: "20px",
     marginBottom: "50px",
@@ -57,7 +89,7 @@ export default function Profile() {
               <Box>
                 <Typography variant="h5">به پلاک ۲۶ خوش آمدید</Typography>
                 <Typography sx={{ mt: "10px", textAlign: "left" }} variant="h5">
-                  ۰۹۱۲۴۳۵۶۶۸۸
+                  {phoneNumber}
                 </Typography>
               </Box>
               <img

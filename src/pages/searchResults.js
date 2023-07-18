@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Divider, Tab } from "@mui/material";
+import { Divider, Tab, Typography } from "@mui/material";
 import Header from "../components/header";
 import { getAds } from "../api/ads";
 import { styled } from "@mui/material/styles";
@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import searchApi from "../api/search";
 
 export default function SearchResult() {
-  const [ads, setAds] = useState(getAds());
+  const [ads, setAds] = useState([]);
   const [value, setValue] = React.useState("1");
 
   const searchInput = useParams();
@@ -16,6 +16,7 @@ export default function SearchResult() {
   const fetchSearchResult = async () => {
     const response = await searchApi.search(searchInput);
     console.log(response.data);
+    setAds(response.data.Item);
   };
   useEffect(() => {
     fetchSearchResult();
@@ -62,8 +63,13 @@ export default function SearchResult() {
       <Header />
 
       <Divider sx={{ my: "50px" }} />
-
-      <ListProducts ads={ads} />
+      {ads.length === 0 ? (
+        <Typography dir="rtl" variant="h3">
+          محصولی یافت نشد!
+        </Typography>
+      ) : (
+        <ListProducts ads={ads} />
+      )}
 
       {/* <TabContext value={value}>
         <TabList

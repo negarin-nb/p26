@@ -24,6 +24,10 @@ export default function Home() {
   const handleSubmit = (e) => {
     if (e.key === "Enter") navigate(`/results/${searchInput}`);
   };
+  const handleFilterButton = (title) => {
+    navigate(`/results/${title}`);
+  };
+
   const svgIconStyle = {
     color: "primary.main",
     transition: "0.3s",
@@ -136,7 +140,15 @@ export default function Home() {
           mt={"25px"}
         >
           {buttonIcons.map((buttonIcon) => (
-            <HomeButton svgIcon={buttonIcon.svg} title={buttonIcon.title} />
+            <HomeButton
+              onClick={() => {
+                //setSearchInput(buttonIcon.title);
+                //console.log(buttonIcon.title);
+                handleFilterButton(buttonIcon.title);
+              }}
+              svgIcon={buttonIcon.svg}
+              title={buttonIcon.title}
+            />
           ))}
         </Stack>
       </Stack>

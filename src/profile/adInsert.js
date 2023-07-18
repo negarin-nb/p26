@@ -15,7 +15,7 @@ import subscrptionApi from "../api/subscrption";
 import productsApi from "../api/products";
 import TextareaAutosize from "@mui/base/TextareaAutosize";
 
-export default function AdInsert() {
+export default function AdInsert({ editData }) {
   const [productList, setProductList] = useState([{}]);
   const [subCategories, setSubCategories] = useState([]);
 
@@ -50,6 +50,9 @@ export default function AdInsert() {
   };
 
   useEffect(() => {
+    if (editData) {
+      setProductData(editData);
+    }
     fetchCategories();
   }, []);
 
@@ -76,7 +79,7 @@ export default function AdInsert() {
       fontSize: "10px",
     },
     "& .MuiButton-root": {
-      fontSize: "12px",
+      fontSize: "15px",
       px: 4,
       py: 1.5,
       my: "30px",
@@ -92,7 +95,7 @@ export default function AdInsert() {
     <>
       <form>
         <Typography sx={titleStyle} variant="h3">
-          درج آگهی
+          {editData ? "ویرایش آگهی" : "درج آگهی"}
         </Typography>
 
         <Grid sx={inputStyle} dir="rtl" container spacing={2}>
@@ -411,7 +414,7 @@ export default function AdInsert() {
             size="large"
             onClick={() => handleAdSubmit(productData)}
           >
-            ثبت
+            {editData ? "ویرایش" : "ثبت"}
           </Button>
         </Stack>
       </form>

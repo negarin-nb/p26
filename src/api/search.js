@@ -5,8 +5,13 @@ const apiUrl = "http://api.p26.ir";
 
 http.setJwt(getJwt());
 
-export function search(input) {
-  return axios.get(`${apiUrl}/products/search/?type=product&title=${input}`);
+export function search({ searchInput }) {
+  return axios.get(
+    `${apiUrl}/products/search/?type=product&title=${searchInput}`
+  );
 }
 
-export default { search };
+export function filter({ categoryId }) {
+  return axios.get(`${apiUrl}/products/filter/?type=category&id=${categoryId}`);
+}
+export default { search, filter };

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import { getProducts } from "../api/products";
-
+import productsApi from "../api/products";
 import PN from "persian-number";
 import {
   TableContainer,
@@ -16,6 +16,8 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
+import ListProducts from "../components/listProducts";
+import { Link } from "react-router-dom";
 
 export default function Ads() {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -46,10 +48,20 @@ export default function Ads() {
     marginBlock: "20px",
     textAlign: "left",
   };
-  const [products, setProducts] = useState(getProducts());
+  const [products, setProducts] = useState([]);
+
+  const fetchProducts = async () => {
+    const response = await productsApi.getProducts();
+    setProducts(response.data.ListItems);
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   return (
     <>
+      {/* <ListProducts ads={products} /> */}
       <Typography sx={titleStyle} variant="h3">
         آگهی‌ها
       </Typography>
@@ -60,15 +72,11 @@ export default function Ads() {
               <TableRow>
                 <StyledTableCell style={{ width: "5%" }}>ردیف</StyledTableCell>
                 <StyledTableCell>نام</StyledTableCell>
-                <StyledTableCell>آنالیز</StyledTableCell>
-                <StyledTableCell>محل بارگیری</StyledTableCell>
-                <StyledTableCell>حالت</StyledTableCell>
-                <StyledTableCell>سایز</StyledTableCell>
-                <StyledTableCell>نوع</StyledTableCell>
-                <StyledTableCell>واحد</StyledTableCell>
+                <StyledTableCell>عرضه‌کننده</StyledTableCell>
+                <StyledTableCell>تولیدکننده</StyledTableCell>
                 <StyledTableCell>قیمت</StyledTableCell>
-                <StyledTableCell>۹٪ ارزش افزوده</StyledTableCell>
-                <StyledTableCell>نمودار</StyledTableCell>
+                <StyledTableCell>تاریخ به روز رسانی</StyledTableCell>
+
                 <StyledTableCell>ویرایش</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -85,20 +93,22 @@ export default function Ads() {
                   >
                     {product.title}
                   </BodyTableCell>
-                  <BodyTableCell>{product.analysis}</BodyTableCell>
-                  <BodyTableCell>{product.loading}</BodyTableCell>
-                  <BodyTableCell>{product.state}</BodyTableCell>
-                  <BodyTableCell>
-                    {PN.convertEnToPe(product.size)}
+                  <BodyTableCell>{product.supplier}</BodyTableCell>
+                  <BodyTableCell>{product.producer}</BodyTableCell>
+                  <BodyTableCell>{product.price}</BodyTableCell>
+
+                  <BodyTableCell></BodyTableCell>
+                  <BodyTableCell
+                    sx={{
+                      "&:hover": {
+                        color: "secondary.main",
+                      },
+                    }}
+                  >
+                    <Link to="/profile/edit-ad" state={product}>
+                      ویرایش
+                    </Link>
                   </BodyTableCell>
-                  <BodyTableCell>{product.type}</BodyTableCell>
-                  <BodyTableCell>{product.unit}</BodyTableCell>
-                  <BodyTableCell>
-                    {PN.convertEnToPe(product.price)}
-                  </BodyTableCell>
-                  <BodyTableCell>{PN.convertEnToPe(product.tax)}</BodyTableCell>
-                  <BodyTableCell>نمودار</BodyTableCell>
-                  <BodyTableCell>ویرایش</BodyTableCell>
                 </StyldedTableRow>
               ))}
             </TableBody>

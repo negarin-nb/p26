@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Stack,
@@ -9,9 +9,40 @@ import {
   Paper,
 } from "@mui/material";
 import HeaderLogedin from "../components/headerLogedin";
-import { getProducts } from "../api/products";
+import productsApi from "../api/products";
+
+import { useParams } from "react-router-dom";
+import profileApi from "../api/profile";
+import { useProfile } from "../contex/profileContext";
 
 export default function ProductDetail() {
+  const [product, setProduct] = useState({});
+  const [shopName, setShopName] = useState("");
+  const { id } = useParams();
+  const profileCtx = useProfile();
+
+  const fetchProduct = async (productId) => {
+    const response = await productsApi.getProduct(productId);
+    console.log(response.data);
+    setProduct(response.data.Item);
+  };
+
+  const fetchProfile = async () => {
+    const response = await profileApi.getProfile();
+    console.log(response.data);
+    setShopName(response.data.Item.shop_name);
+    profileCtx.setProfile(response.data.Item);
+  };
+
+  useEffect(() => {
+    console.log(id);
+    fetchProduct(id);
+    console.log(profileCtx.userProfile);
+    if (!profileCtx.userProfile.shopName) {
+      fetchProfile();
+    }
+  }, []);
+
   const imageColumn = {};
   const titleColumn = {
     paddingInline: "30px",
@@ -43,7 +74,6 @@ export default function ProductDetail() {
     },
   };
 
-  const [product, setProduct] = useState(getProducts()[0]);
   return (
     <>
       <HeaderLogedin />
@@ -81,7 +111,7 @@ export default function ProductDetail() {
                     marginBottom: "60px",
                   }}
                 >
-                  از ۶,۰۰۰,۰۰۰ تومان تا ۸,۰۰۰,۰۰۰ تومان
+                  از {product.max_price} تومان تا {product.min_price} تومان
                 </Typography>
 
                 <Button
@@ -111,7 +141,7 @@ export default function ProductDetail() {
                   src={require("../assets/images/Vector3.png")}
                 />
                 <Box>
-                  <Typography variant="h6">فولاد آریا</Typography>
+                  <Typography variant="h6">{shopName}</Typography>
                 </Box>
               </Stack>
               <Divider />
@@ -121,7 +151,9 @@ export default function ProductDetail() {
                   src={require("../assets/images/Vector3.png")}
                 />
                 <Box>
-                  <Typography variant="h6">محل تحویل: کارخانه</Typography>
+                  <Typography variant="h6">
+                    محل تحویل: {product.delivery}
+                  </Typography>
                 </Box>
               </Stack>
               <Divider />
@@ -131,7 +163,9 @@ export default function ProductDetail() {
                   src={require("../assets/images/Vector3.png")}
                 />
                 <Box>
-                  <Typography variant="h6">شماره تماس : ۰۹۱۲۴۳۵۶۶۸۸</Typography>
+                  <Typography variant="h6">
+                    شماره تماس : {product.tel}
+                  </Typography>
                 </Box>
               </Stack>
               <Divider />
@@ -141,7 +175,9 @@ export default function ProductDetail() {
                   src={require("../assets/images/Vector3.png")}
                 />
                 <Box>
-                  <Typography variant="h6">قیمت فروشنده: ۸,۰۰۰,۰۰۰</Typography>
+                  <Typography variant="h6">
+                    قیمت فروشنده: {product.price} تومان
+                  </Typography>
                 </Box>
               </Stack>
               <Divider />
