@@ -86,7 +86,12 @@ export default function HeaderNotLogedin() {
           تماس با ما
         </Typography>
       </Stack>
-      <Stack direction="row" sx={{ flex: 1, justifyContent: "flex-end" }}>
+      <Stack
+        to={"/"}
+        component={Link}
+        direction="row"
+        sx={{ flex: 1, justifyContent: "flex-end" }}
+      >
         <img
           style={{ width: "100%", maxWidth: "120px" }}
           src={require("../assets/images/Logo601.png")}

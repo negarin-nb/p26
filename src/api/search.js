@@ -11,7 +11,10 @@ export function search({ searchInput }) {
   );
 }
 
-export function filter({ categoryId }) {
-  return axios.get(`${apiUrl}/products/filter/?type=category&id=${categoryId}`);
+export function filter({ searchInput }) {
+  console.log(searchInput);
+  return axios.get(
+    `${apiUrl}/products/filter/?type=category&id=${searchInput}`
+  );
 }
 export default { search, filter };
