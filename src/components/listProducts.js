@@ -10,11 +10,12 @@ import {
   TableCell,
   TableBody,
   Typography,
+  Stack,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import productsApi from "../api/products";
 
 export default function ListProducts({ ads }) {
+  const [products, setProducts] = useState(ads);
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     backgroundColor: theme.palette.custom.main,
     color: theme.palette.primary.main,
@@ -39,6 +40,10 @@ export default function ListProducts({ ads }) {
       backgroundColor: theme.palette.custom.main,
     },
   }));
+
+  useEffect(() => {
+    setProducts(ads);
+  }, []);
 
   return (
     <TableContainer>
@@ -72,7 +77,7 @@ export default function ListProducts({ ads }) {
               </BodyTableCell>
               <BodyTableCell>{product.producer}</BodyTableCell>
               <BodyTableCell>{product.supplier}</BodyTableCell>
-              <BodyTableCell>{product.price}</BodyTableCell>
+              <BodyTableCell>{PN.convertEnToPe(product.price)}</BodyTableCell>
               <BodyTableCell>{product.updateDate}</BodyTableCell>
               <BodyTableCell>
                 <Typography

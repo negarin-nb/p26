@@ -6,6 +6,8 @@ const apiUrl = "http://api.p26.ir";
 http.setJwt(getJwt());
 
 export function getProfile() {
+  http.setJwt(getJwt());
+
   return axios.get(`${apiUrl}/users/profile/`);
 }
 export function editProfile(userData) {
@@ -24,7 +26,12 @@ export function editProfile(userData) {
   });
 }
 
+export function getMyProducts() {
+  return axios.get(`${apiUrl}/products/myproduct/`);
+}
+
 export default {
   getProfile,
   editProfile,
+  getMyProducts,
 };

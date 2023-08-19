@@ -14,8 +14,6 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Header from "../components/header";
-import { getAds } from "../api/ads";
-import { styled } from "@mui/material/styles";
 import ListProducts from "../components/listProducts";
 import productsApi from "../api/products";
 

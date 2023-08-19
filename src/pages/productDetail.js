@@ -37,6 +37,7 @@ export default function ProductDetail() {
   useEffect(() => {
     console.log(id);
     fetchProduct(id);
+    console.log("userProfile");
     console.log(profileCtx.userProfile);
     if (!profileCtx.userProfile.shopName) {
       fetchProfile();
@@ -141,7 +142,7 @@ export default function ProductDetail() {
                   src={require("../assets/images/Vector3.png")}
                 />
                 <Box>
-                  <Typography variant="h6">{shopName}</Typography>
+                  <Typography variant="h6">فروشنده : {shopName}</Typography>
                 </Box>
               </Stack>
               <Divider />

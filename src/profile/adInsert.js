@@ -10,20 +10,28 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import subscrptionApi from "../api/subscrption";
 import productsApi from "../api/products";
 import TextareaAutosize from "@mui/base/TextareaAutosize";
+import PN from "persian-number";
 
 export default function AdInsert({ editData }) {
   const [productList, setProductList] = useState([{}]);
   const [subCategories, setSubCategories] = useState([]);
 
+  const form = new FormData();
+  const formdata = new FormData();
+
   const [productData, setProductData] = useState({
+    image: null,
     title: "",
     category: "",
     category_id: 0,
     subCategory: "",
+    subCategory_id: 0,
     alloy: "",
     color: "",
     unit: "",
@@ -35,7 +43,7 @@ export default function AdInsert({ editData }) {
     height: "",
     standard: "",
     weight: "",
-    price: null,
+    price: "",
     supplier: "",
     delivery: "",
     producer: "",
@@ -43,6 +51,20 @@ export default function AdInsert({ editData }) {
     tel: "",
     description: "",
   });
+
+  const [open, setOpen] = useState(false);
+  const [severity, setSeverity] = useState("");
+  const [message, setMessage] = useState("");
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const openAlert = (s, m) => {
+    setSeverity(s);
+    setMessage(m);
+    setOpen(true);
+  };
 
   const fetchCategories = async () => {
     const response = await productsApi.getCategories();
@@ -61,10 +83,69 @@ export default function AdInsert({ editData }) {
     setSubCategories(response.data.ListItems);
   };
 
-  const handleAdSubmit = async (productData) => {
-    console.log(productData);
-    const response = await productsApi.createProduct(productData);
-    console.log(response.data);
+  const handleAdSubmit = async (form) => {
+    const formData = new FormData();
+    formData.append("title", productData.title);
+    formData.append("description", productData.description);
+    formData.append("alloy", productData.alloy);
+    formData.append("color", productData.link);
+    formData.append("link", productData.link);
+    formData.append("length", productData.length);
+    formData.append("height", productData.height);
+    formData.append("width", productData.width);
+    formData.append("weight", productData.weight);
+    formData.append("delivery", productData.delivery);
+    formData.append("producer", productData.producer);
+    formData.append("supplier", productData.supplier);
+    let _price = PN.convertPeToEn(productData.price);
+    formData.append("price", parseInt(_price, 10));
+    formData.append("mode", productData.mode);
+    formData.append("tel", productData.tel);
+    formData.append("thickness", productData.thickness);
+    formData.append("size", productData.size);
+    formData.append("unit", productData.unit);
+    formData.append("standard", productData.standard);
+    formData.append("subcategory_id", productData.subCategory_id);
+    formData.append("category_id", productData.category_id);
+    //formData.append("image", "image.jpeg");
+    for (const value of form.values()) {
+      console.log(value);
+    }
+
+    try {
+      const response = await productsApi.createProduct(formData);
+      console.log(response.data);
+      openAlert("success", "آگهی با موفقیت ثبت شد.");
+      setProductData({
+        image: null,
+        title: "",
+        category: "",
+        category_id: 0,
+        subCategory: "",
+        subCategory_id: 0,
+        alloy: "",
+        color: "",
+        unit: "",
+        mode: "",
+        size: "",
+        thickness: "",
+        width: "",
+        length: "",
+        height: "",
+        standard: "",
+        weight: "",
+        price: "",
+        supplier: "",
+        delivery: "",
+        producer: "",
+        link: "",
+        tel: "",
+        description: "",
+      });
+    } catch (error) {
+      openAlert("error", "مشکلی پیش آمده است.");
+      console.log(error);
+    }
   };
 
   const titleStyle = {
@@ -124,6 +205,8 @@ export default function AdInsert({ editData }) {
                 label="محصول"
                 value={productData.category}
                 onChange={(event) => {
+                  //  form.append("category", event.target.value);
+                  formdata.append("category_id", event.target.value.id);
                   setProductData({
                     ...productData,
                     category: event.target.value,
@@ -153,7 +236,8 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   mode: event.target.value,
                 });
-                console.log(productData);
+                formdata.append("mode", event.target.value);
+                console.log(formdata);
               }}
               fullWidth
               label="حالت"
@@ -166,6 +250,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   alloy: event.target.value,
                 });
+                formdata.append("alloy", event.target.value);
               }}
               fullWidth
               label="آلیاژ"
@@ -190,6 +275,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   delivery: event.target.value,
                 });
+                formdata.append("delivery", event.target.value);
               }}
               fullWidth
               label="محل تحویل"
@@ -202,6 +288,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   standard: event.target.value,
                 });
+                formdata.append("standard", event.target.value);
               }}
               fullWidth
               label="استاندارد"
@@ -214,6 +301,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   unit: event.target.value,
                 });
+                formdata.append("unit", event.target.value);
               }}
               fullWidth
               label="واحد"
@@ -227,6 +315,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   producer: event.target.value,
                 });
+                formdata.append("producer", event.target.value);
               }}
               fullWidth
               label="تولیدکننده"
@@ -240,6 +329,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   link: event.target.value,
                 });
+                formdata.append("link", event.target.value);
               }}
               fullWidth
               label="لینک محصول"
@@ -253,8 +343,9 @@ export default function AdInsert({ editData }) {
               onChange={(event) => {
                 setProductData({
                   ...productData,
-                  price: event.target.value,
+                  price: PN.convertEnToPe(event.target.value),
                 });
+                formdata.append("price", event.target.value);
               }}
               fullWidth
               label="قیمت (تومان)"
@@ -274,7 +365,9 @@ export default function AdInsert({ editData }) {
                   setProductData({
                     ...productData,
                     subCategory: event.target.value,
+                    subCategory_id: event.target.value.id,
                   });
+                  formdata.append("subCategory_id", event.target.value.id);
                 }}
               >
                 {subCategories.map((subCategory) => (
@@ -291,6 +384,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   size: event.target.value,
                 });
+                formdata.append("size", event.target.value);
               }}
               fullWidth
               label="سایز"
@@ -303,6 +397,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   thickness: event.target.value,
                 });
+                form.append("thickness", event.target.value);
               }}
               fullWidth
               label="ضخامت"
@@ -315,6 +410,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   width: event.target.value,
                 });
+                formdata.append("width", event.target.value);
               }}
               fullWidth
               label="عرض"
@@ -327,6 +423,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   height: event.target.value,
                 });
+                formdata.append("height", event.target.value);
               }}
               fullWidth
               label="ارتفاع"
@@ -339,6 +436,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   length: event.target.value,
                 });
+                formdata.append("length", event.target.value);
               }}
               fullWidth
               label="طول"
@@ -351,6 +449,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   weight: event.target.value,
                 });
+                formdata.append("weight", event.target.value);
               }}
               fullWidth
               label="وزن"
@@ -364,6 +463,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   supplier: event.target.value,
                 });
+                form.append("supplier", event.target.value);
               }}
               fullWidth
               label="عرضه کننده"
@@ -376,6 +476,7 @@ export default function AdInsert({ editData }) {
                   ...productData,
                   tel: event.target.value,
                 });
+                formdata.append("tel", event.target.value);
                 console.log(productData);
               }}
               fullWidth
@@ -391,7 +492,8 @@ export default function AdInsert({ editData }) {
               ...productData,
               description: event.target.value,
             });
-            console.log(productData);
+            formdata.append("description", event.target.value);
+            console.log(form);
           }}
           fullWidth
           dir="rtl"
@@ -408,16 +510,26 @@ export default function AdInsert({ editData }) {
           }}
         >
           <Button
-            type="submit"
+            //   type="submit"
             variant="contained"
             color="primary"
             size="large"
-            onClick={() => handleAdSubmit(productData)}
+            onClick={() => handleAdSubmit(formdata)}
           >
             {editData ? "ویرایش" : "ثبت"}
           </Button>
         </Stack>
       </form>
+      <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+        <Alert
+          dir="rtl"
+          onClose={handleClose}
+          severity={severity}
+          sx={{ width: "100%" }}
+        >
+          {message}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

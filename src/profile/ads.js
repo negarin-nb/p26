@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import ListProducts from "../components/listProducts";
 import { Link } from "react-router-dom";
+import profileApi from "../api/profile";
 
 export default function Ads() {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -51,7 +52,7 @@ export default function Ads() {
   const [products, setProducts] = useState([]);
 
   const fetchProducts = async () => {
-    const response = await productsApi.getProducts();
+    const response = await profileApi.getMyProducts();
     setProducts(response.data.ListItems);
   };
 
@@ -95,7 +96,9 @@ export default function Ads() {
                   </BodyTableCell>
                   <BodyTableCell>{product.supplier}</BodyTableCell>
                   <BodyTableCell>{product.producer}</BodyTableCell>
-                  <BodyTableCell>{product.price}</BodyTableCell>
+                  <BodyTableCell>
+                    {PN.convertEnToPe(product.price)}
+                  </BodyTableCell>
 
                   <BodyTableCell></BodyTableCell>
                   <BodyTableCell

@@ -18,7 +18,7 @@ export default function Profile() {
   const profileCtx = useProfile();
   const fetchProfile = async () => {
     const response = await profileApi.getProfile();
-    //  console.log(response.data);
+    console.log(response.data);
     const userData = {
       firstName: response.data.Item.first_name,
       lastName: response.data.Item.last_name,
@@ -37,9 +37,12 @@ export default function Profile() {
 
   useEffect(() => {
     // console.log(profileCtx.userProfile);
-    if (!profileCtx.userProfile.shopName) {
+    if (!profileCtx.userProfile.phoneNumber) {
       fetchProfile();
-    } else phoneNumber(profileCtx.userProfile.phoneNumber);
+    } else {
+      const convert = PN.convertEnToPe(profileCtx.userProfile.phoneNumber);
+      setPhoneNumber(convert);
+    }
   }, []);
 
   const ContainerStyle = {

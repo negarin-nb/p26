@@ -56,14 +56,13 @@ export default function Login() {
         //openAlert("success", "عضویت با موفقیت انجام شد.");
         authCtx.setUserToken(response.data.access);
         console.log(response.data.access);
-
         localStorage.setItem("token", JSON.stringify(response.data.access));
       } else {
-        setMessage(response.data.detail);
+        setMessage("نام کاربری یا رمز عبور اشتباه است.");
       }
       navigate("/");
     } catch (e) {
-      openAlert("error", message);
+      openAlert("error", "نام کاربری یا رمز عبور اشتباه است.");
       console.log(e);
     }
   };

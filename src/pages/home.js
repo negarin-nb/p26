@@ -1,93 +1,27 @@
 import React, { useState } from "react";
 import { Paper, InputBase, IconButton, Box, Stack } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import AdCard from "../components/adCard";
 import Header from "../components/header";
-import Girder from "../assets/svgIcons/girder";
-import Dots from "../assets/svgIcons/dots";
+
 import HomeButton from "../components/homeButton";
-import Pipe from "../assets/svgIcons/pipe";
-import Profile from "../assets/svgIcons/profile";
-import Reba from "../assets/svgIcons/reba";
-import Steel from "../assets/svgIcons/steel";
-import Stud from "../assets/svgIcons/stud";
-import Corner from "../assets/svgIcons/corner";
 import { useNavigate } from "react-router-dom";
+import ButtonIcons from "../assets/buttonIcons/ButtonIcons";
 
 export default function Home() {
   const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState("");
 
   const handleSubmitButton = () => {
-    navigate(`/results/${searchInput}`);
+    navigate(`/results/${searchInput}`, {
+      state: "title",
+    });
   };
-  const handleSubmit = (e) => {
+  const handleSubmitEnter = (e) => {
     if (e.key === "Enter") navigate(`/results/${searchInput}`);
   };
   const handleFilterButton = (id) => {
     navigate(`/results/${id}`);
   };
-
-  const svgIconStyle = {
-    color: "primary.main",
-    transition: "0.3s",
-    fontSize: {
-      sx: 30,
-      sm: 35,
-      lg: 40,
-    },
-  };
-
-  const buttonIcons = [
-    {
-      svg: () => (
-        <Girder viewBox="0 0 34 34" className="svg" sx={svgIconStyle} />
-      ),
-      title: "تیرآهن",
-      id: 1,
-    },
-    {
-      svg: () => (
-        <Profile viewBox="0 0 34 34" className="svg" sx={svgIconStyle} />
-      ),
-      title: "پروفیل",
-      id: 8,
-    },
-    {
-      svg: () => <Reba viewBox="0 0 34 34" className="svg" sx={svgIconStyle} />,
-      title: "میله‌گرد",
-      id: 2,
-    },
-    {
-      svg: () => <Stud viewBox="0 0 40 34" className="svg" sx={svgIconStyle} />,
-      title: "نبشی و ناودانی",
-      id: 9,
-    },
-    {
-      svg: () => <Pipe viewBox="0 0 34 34" className="svg" sx={svgIconStyle} />,
-      title: "لوله",
-      id: 7,
-    },
-    {
-      svg: () => (
-        <Steel viewBox="0 0 34 34" className="svg" sx={svgIconStyle} />
-      ),
-      title: "استیل",
-      id: 12,
-    },
-    {
-      svg: () => (
-        <Corner viewBox="0 0 34 34" className="svg" sx={svgIconStyle} />
-      ),
-      title: "تجهیزات",
-      id: 10,
-    },
-    {
-      svg: () => <Dots viewBox="0 0 36 10" className="svg" sx={svgIconStyle} />,
-      title: "سایر",
-      id: 0,
-    },
-  ];
 
   return (
     <Box>
@@ -138,7 +72,7 @@ export default function Home() {
             placeholder="جستجو"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={(e) => handleSubmit(e)}
+            onKeyDown={(e) => handleSubmitEnter(e)}
           />
         </Paper>
         <Stack
@@ -147,11 +81,12 @@ export default function Home() {
           spacing={{ xs: 2, sm: 3.8, lg: 5.5 }}
           mt={"25px"}
         >
-          {buttonIcons.map((buttonIcon) => (
+          {ButtonIcons.map((buttonIcon) => (
             <HomeButton
               svgIcon={buttonIcon.svg}
               title={buttonIcon.title}
               id={buttonIcon.id}
+              onClickResult={() => {}}
             />
           ))}
         </Stack>

@@ -1,21 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Typography, ButtonBase } from "@mui/material";
 import { Link } from "react-router-dom";
 
-export default function HomeButton({ svgIcon, title, id }) {
+export default function HomeButton({
+  svgIcon,
+  title,
+  id,
+  onClickResult,
+  stateTitle,
+}) {
+  const homeButtonStyle = {
+    "&:hover": {
+      "& .Button-title, .svg": {
+        color: "secondary.main",
+      },
+    },
+  };
+  const activeHomeButtonStyle = {
+    "& .Button-title, .svg": {
+      color: "secondary.main",
+    },
+  };
   return (
     <Link
       to={id === 0 ? "/products" : `/results/${id}`}
       state={{ type: "number", title: title }}
+      onClick={() => onClickResult(id)}
     >
       <ButtonBase
-        sx={{
-          "&:hover": {
-            "& .Button-title, .svg": {
-              color: "secondary.main",
-            },
-          },
-        }}
+        sx={stateTitle === title ? activeHomeButtonStyle : homeButtonStyle}
       >
         {svgIcon()}
         <Typography

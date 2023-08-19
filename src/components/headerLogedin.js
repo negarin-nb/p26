@@ -27,7 +27,18 @@ export default function HeaderLogedin() {
   return (
     <Stack direction="row" sx={{ pt: "20px" }}>
       <Stack direction="row" sx={{ flex: 1 }}>
-        <Box sx={ButtonStyle} component={Link} to="/register">
+        <Box sx={ButtonStyle}
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        >
           <img
             style={{ height: "35px", width: "35px" }}
             src={require("../assets/images/search.png")}
