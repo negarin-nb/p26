@@ -73,6 +73,7 @@ export default function AdInsert({ editData }) {
 
   useEffect(() => {
     if (editData) {
+      console.log(editData);
       setProductData(editData);
     }
     fetchCategories();
@@ -107,7 +108,7 @@ export default function AdInsert({ editData }) {
     formData.append("standard", productData.standard);
     formData.append("subcategory_id", productData.subCategory_id);
     formData.append("category_id", productData.category_id);
-    //formData.append("image", "image.jpeg");
+    formData.append("image", productData.image);
     for (const value of form.values()) {
       console.log(value);
     }
@@ -172,6 +173,10 @@ export default function AdInsert({ editData }) {
     },
   };
 
+  const imageSelectHandler = (event) => {
+    console.log(event.target.files[0]);
+  };
+
   return (
     <>
       <form>
@@ -203,7 +208,7 @@ export default function AdInsert({ editData }) {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 label="محصول"
-                value={productData.category}
+                value={productData.category.title}
                 onChange={(event) => {
                   //  form.append("category", event.target.value);
                   formdata.append("category_id", event.target.value.id);
@@ -485,6 +490,76 @@ export default function AdInsert({ editData }) {
             />
           </Grid>
         </Grid>
+
+        <Stack dir={"rtl"} mt="10px" mb="20px">
+          <label
+            style={{
+              textAlign: "right",
+              alignContent: "flex-start",
+              justifyContent: "flex-start",
+              // border: "1px solid #ccc",
+              // borderRadius: "5px",
+              // padding: "12px",
+              cursor: "pointer",
+            }}
+          >
+            {!productData.image && (
+              <>
+                <img
+                  width={"50px"}
+                  //borderRadius={"10px"}
+                  style={{ opacity: "0.5" }}
+                  src={require("../assets/images/uploadImage.png")}
+                />
+                <Typography sx={{ "&:hover": { color: "black" } }} mt="10px">
+                  آپلود تصویر
+                </Typography>
+              </>
+            )}
+            <input
+              style={{ display: "none" }}
+              type="file"
+              onChange={(event) => {
+                setProductData({
+                  ...productData,
+                  image: event.target.files[0],
+                });
+              }}
+            />
+          </label>
+          {productData.image && (
+            <>
+              <img
+                width={"150px"}
+                style={{ borderRadius: "5px" }}
+                //borderRadius={"10px"}
+                src={
+                  editData
+                    ? editData.image
+                    : URL.createObjectURL(productData.image)
+                }
+              />
+              <Typography
+                sx={{
+                  cursor: "pointer",
+                  width: "100px",
+                  "&:hover": { color: "black" },
+                }}
+                textAlign={"left"}
+                onClick={() => {
+                  setProductData({
+                    ...productData,
+                    image: null,
+                  });
+                }}
+                mt="10px"
+              >
+                حذف تصویر
+              </Typography>
+            </>
+          )}
+        </Stack>
+
         <TextField
           value={productData.description}
           onChange={(event) => {
