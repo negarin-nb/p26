@@ -13,6 +13,7 @@ import {
   Stack,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import moment from "jalali-moment";
 
 export default function ListProducts({ ads }) {
   const [products, setProducts] = useState(ads);
@@ -78,7 +79,11 @@ export default function ListProducts({ ads }) {
               <BodyTableCell>{product.producer}</BodyTableCell>
               <BodyTableCell>{product.supplier}</BodyTableCell>
               <BodyTableCell>{PN.convertEnToPe(product.price)}</BodyTableCell>
-              <BodyTableCell>{product.updateDate}</BodyTableCell>
+              <BodyTableCell>
+                {PN.convertEnToPe(
+                  moment(product.updated_at).format("YYYY/MM/DD")
+                )}
+              </BodyTableCell>
               <BodyTableCell>
                 <Typography
                   sx={{
