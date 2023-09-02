@@ -4,12 +4,28 @@ import { Grid, Paper, Stack, Typography, Button, Divider } from "@mui/material";
 import subscrptionApi from "../api/subscrption";
 import moment from "jalali-moment";
 import PN from "persian-number";
-
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 export default function Subscription() {
   const [adSubscription, setAdSubscription] = useState([]);
   const [callSubscription, setCallSubscription] = useState([]);
   const [credit, setCredit] = useState();
   const [timeCredit, setTimeCredit] = useState("");
+  const [buyId, setBuyId] = useState();
+  const [open, setOpen] = useState(false);
+
+  const handleBuySubscription = (id) => {
+    setOpen(true);
+    setBuyId(id);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const packData = [
     { color: "#FF4D00B2" },
     { color: "#FF4D00CC" },
@@ -111,7 +127,7 @@ export default function Subscription() {
                 variant="outlined"
                 color="myWhite"
                 size="large"
-                onClick={() => buySubscription(item.id)}
+                onClick={() => handleBuySubscription(item.id)}
               >
                 خرید
               </Button>
@@ -153,10 +169,54 @@ export default function Subscription() {
                 variant="outlined"
                 color="myWhite"
                 size="large"
-                onClick={() => buySubscription(item.id)}
+                onClick={() => handleBuySubscription(item.id)}
               >
                 خرید
               </Button>
+              <Dialog
+                sx={{
+                  "& .MuiModal-backdrop": { backgroundColor: "#0000003b" },
+                  "& .MuiDialog-paper": {
+                    width: "300px",
+                    maxHeight: 435,
+                    padding: "20px",
+                  },
+                }}
+                dir="rtl"
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle
+                  bgcolor="custom.main"
+                  marginBottom="20px"
+                  variant="h3"
+                  id="alert-dialog-title"
+                >
+                  {"خرید اشتراک"}
+                </DialogTitle>
+
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    آیا از خرید اشتراک مورد نظر را مطمئن هستید؟
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ justifyContent: "center" }}>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      console.log(buyId);
+                      buySubscription(buyId);
+                    }}
+                  >
+                    بله
+                  </Button>
+                  <Button variant="outlined" onClick={handleClose} autoFocus>
+                    خیر
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </Paper>
           </Grid>
         ))}
