@@ -33,17 +33,25 @@ export default function Products() {
   const [producer, setProducer] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage, setPostsPerPage] = useState(40);
+  const [postsPerPage, setPostsPerPage] = useState(30);
 
   // const indexOfLastPost = currentPage * postsPerPage;
   // const indexOfFirstPost = indexOfLastPost - postsPerPage;
   // const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    // const indexOfLastPost = currentPage * postsPerPage;
+    // const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    // const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
+    // setAds(currentProducts);
+  };
 
   const fetchProducts = async () => {
     const response = await productsApi.getProducts();
-    setAds(response.data.ListItems);
+    const _products = JSON.parse(JSON.stringify(response.data.ListItems));
+    //setAds(_products);
+    arrangePage(_products);
     setProducts(response.data.ListItems);
     //  console.log(response.data.ListItems);
   };
@@ -58,14 +66,25 @@ export default function Products() {
     setSubCategories(response.data.ListItems);
   };
 
-  useEffect(() => {
-    fetchProducts();
-    fetchCategories();
+  const arrangePage = (products) => {
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
     setAds(currentProducts);
+  };
+
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
   }, []);
+
+  useEffect(() => {
+    arrangePage(products);
+    // const indexOfLastPost = currentPage * postsPerPage;
+    // const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    // const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
+    // setAds(currentProducts);
+  }, [currentPage]);
 
   const handleCategorySelect = async (id) => {
     setSubCategories([]);
@@ -253,13 +272,15 @@ export default function Products() {
         //  page={currentPage}
         // onClick={}
       /> */}
-      <Stack justifyContent="center" py="30px" direction="row">
-        <PaginationCustom
-          postsPerPage={postsPerPage}
-          totalPosts={products.length}
-          paginate={paginate}
-        />
-      </Stack>
+      {ads.length >= postsPerPage && (
+        <Stack justifyContent="center" py="30px" direction="row">
+          <PaginationCustom
+            postsPerPage={postsPerPage}
+            totalPosts={products.length}
+            paginate={paginate}
+          />
+        </Stack>
+      )}
       {/* <TabContext value={value}>
         <TabList
           dir="rtl"
