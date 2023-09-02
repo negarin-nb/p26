@@ -25,10 +25,10 @@ export default function SearchResult() {
   const [subCategories, setSubCategories] = useState([]);
 
   let state = useLocation().state;
-  console.log(state);
+  // console.log(state);
 
   const { searchInput } = useParams();
-  console.log(searchInput);
+  //console.log(searchInput);
 
   const fetchSearchResult = async () => {
     const response = await searchApi.search(searchInput);
@@ -37,7 +37,7 @@ export default function SearchResult() {
   };
   const fetchFilterResult = async (id) => {
     const response = await searchApi.filter(id);
-    console.log(response.data.Item);
+    // console.log(response.data.Item);
     setAds(response.data.Item);
   };
 
@@ -54,7 +54,7 @@ export default function SearchResult() {
   const handleSubCategorySelect = async (id) => {
     console.log(id);
     const _products = [...ads];
-    const _ads = _products.filter((product) => product.subCategory === id);
+    const _ads = _products.filter((product) => product.subcategory === id);
     setAds(_ads);
     // fetchSubCategories(id);
   };
