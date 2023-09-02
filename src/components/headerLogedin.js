@@ -1,6 +1,7 @@
 import { Box, Button, Stack, Toolbar, Typography } from "@mui/material";
 import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../contex/authContext";
 
 const TypographyStyle = {
   fontWeight: 600,
@@ -14,42 +15,48 @@ const ButtonStyle = {
   fontWeight: 600,
   fontSize: "14px",
   textDecoration: "none",
+  bgcolor: "custom.main",
   "&:hover": {
-    bgcolor: "white",
-    color: "secondary.main",
+    bgcolor: "custom.dark",
   },
-  paddingRight: "10px",
+  marginRight: "5px",
+  my: "0px",
+  p: "7px",
+  borderRadius: "3px",
+  justifyContent: "center",
+  cursor: "pointer",
 };
 
 export default function HeaderLogedin() {
+  const authCtx = useAuth();
+  const navigate = useNavigate();
   //const theme = useTheme();
   //const isMobile = useMediaQuery(theme.breakPoints.down("xs"))
   return (
     <Stack direction="row" sx={{ pt: "20px" }}>
-      <Stack direction="row" sx={{ flex: 1 }}>
-        <Box sx={ButtonStyle}
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+      <Stack direction="row" sx={{ flex: 1, my: "10px" }}>
+        <Stack
+          sx={ButtonStyle}
+          onClick={() => {
+            authCtx.logout();
+            navigate("/");
+          }}
         >
           <img
-            style={{ height: "35px", width: "35px" }}
-            src={require("../assets/images/search.png")}
+            style={{ width: "18px" }}
+            src={require("../assets/images/Vector7.png")}
           />
-        </Box>
-        <Box sx={ButtonStyle} component={Link} to="/profile">
+        </Stack>
+        <Stack
+          sx={[ButtonStyle, { px: "11px" }]}
+          component={Link}
+          to="/profile"
+        >
           <img
-            style={{ height: "35px", width: "35px" }}
-            src={require("../assets/images/Profile.png")}
+            style={{ height: "18px" }}
+            src={require("../assets/icons/profile.png")}
           />
-        </Box>
+        </Stack>
       </Stack>
 
       <Stack
