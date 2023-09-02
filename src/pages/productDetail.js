@@ -8,23 +8,62 @@ import {
   Divider,
   Paper,
 } from "@mui/material";
-import HeaderLogedin from "../components/headerLogedin";
-import productsApi from "../api/products";
 
+import productsApi from "../api/products";
+import moment from "jalali-moment";
+import PN from "persian-number";
 import { useParams } from "react-router-dom";
 import profileApi from "../api/profile";
 import { useProfile } from "../contex/profileContext";
+import BiddingDialog from "../components/biddingDialog";
+import Header from "../components/header";
+import biddingApi from "../api/bidding";
 
 export default function ProductDetail() {
   const [product, setProduct] = useState({});
   const [shopName, setShopName] = useState("");
+  const [biddings, setBiddings] = useState([]);
   const { id } = useParams();
   const profileCtx = useProfile();
+  const [openBidding, setOpenBidding] = useState(false);
+  const [price, setPrice] = useState("");
+
+  const handlePrice = (p) => {
+    setPrice(PN.convertEnToPe(p));
+  };
+  const handleClickOpen = () => {
+    setOpenBidding(true);
+  };
+
+  const handleClose = () => {
+    setOpenBidding(false);
+    setPrice("");
+  };
+
+  const handleSubmitBidding = async () => {
+    let _price = PN.convertPeToEn(price);
+    const response = await biddingApi.createBid({
+      id,
+      price: parseInt(_price, 10),
+    });
+    console.log(response.data);
+    handleClose();
+  };
 
   const fetchProduct = async (productId) => {
     const response = await productsApi.getProduct(productId);
     console.log(response.data);
-    setProduct(response.data.Item);
+    //setProduct(response.data.Item);
+    const _product = {
+      ...response.data.Item,
+      categoryid: response.data.Item.category.id,
+      categorytitle: response.data.Item.category.title,
+      subcategoryid: response.data.Item.subcategory.id,
+      subcategorytitle: response.data.Item.subcategory.title,
+    };
+    setProduct(_product);
+    setBiddings(response.data.Item.biddings);
+    // console.log(product.biddings);
   };
 
   const fetchProfile = async () => {
@@ -44,13 +83,20 @@ export default function ProductDetail() {
     }
   }, []);
 
-  const imageColumn = {};
+  const imageColumn = {
+    backgroundColor: "custom.main",
+    height: "330px",
+    justifyContent: "center",
+    alignItems: "center",
+    // display: "inline",
+  };
   const titleColumn = {
     paddingInline: "30px",
   };
   const sellerColumn = {
     backgroundColor: "custom.main",
     padding: "30px",
+    pb: "15px",
     borderRadius: "5px",
   };
   const sellersRow = {
@@ -77,20 +123,48 @@ export default function ProductDetail() {
 
   return (
     <>
-      <HeaderLogedin />
+      <Header />
       <Stack dir="rtl">
         <Divider sx={{ paddingTop: "40px" }} />
         <div>
           <Typography sx={{ textAlign: "left", paddingTop: "20px" }}>
-            خانه {`>`} تیرآهن {`>`} {product.title}
+            خانه {`>`} {product.categorytitle} {`>`} {product.subcategorytitle}{" "}
+            {`>`} {product.title}
           </Typography>
           <Grid container sx={{ marginBlock: "30px" }}>
-            <Grid sx={imageColumn} item xs={4}>
-              <Paper elevation={2}>
-                <img
-                  src={require("../assets/images/girder.jpeg")}
-                  style={{ width: "100%", paddingBottom: "5px" }}
-                />
+            <Grid item xs={4}>
+              <Paper elevation={2} sx={imageColumn}>
+                <Stack
+                  sx={
+                    product.image && {
+                      backgroundImage: `url(${product.image})`,
+                      backgroundSize: "cover",
+                    }
+                  }
+                  width="100%"
+                  height="330px"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  {product.image ? (
+                    <img
+                      src={""}
+                      style={{
+                        maxWidth: "100%",
+                        objectFit: "cover",
+                        overflow: "hidden",
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={require("../assets/images/empty.png")}
+                      style={{
+                        width: "30%",
+                        opacity: "0.3",
+                      }}
+                    />
+                  )}
+                </Stack>
               </Paper>
             </Grid>
             <Grid sx={titleColumn} item xs={4}>
@@ -108,11 +182,12 @@ export default function ProductDetail() {
                   variant="h1"
                   sx={{
                     textAlign: "left",
-                    marginTop: "180px",
-                    marginBottom: "60px",
+                    marginTop: "160px",
+                    marginBottom: "45px",
                   }}
                 >
-                  از {product.max_price} تومان تا {product.min_price} تومان
+                  از {PN.convertEnToPe(product.min_price)} تومان تا{" "}
+                  {PN.convertEnToPe(product.max_price)} تومان
                 </Typography>
 
                 <Button
@@ -123,6 +198,13 @@ export default function ProductDetail() {
                 >
                   خرید با کمترین قیمت
                 </Button>
+                <Button
+                  sx={{ marginTop: "10px" }}
+                  variant="outlined"
+                  onClick={handleClickOpen}
+                >
+                  پیشنهاد قیمت
+                </Button>
               </Stack>
             </Grid>
             <Grid sx={sellerColumn} item xs={4}>
@@ -130,7 +212,7 @@ export default function ProductDetail() {
                 variant="h2"
                 sx={{
                   textAlign: "left",
-                  paddingBottom: "30px",
+                  paddingBottom: "10px",
                   color: "black",
                 }}
               >
@@ -169,6 +251,7 @@ export default function ProductDetail() {
                   </Typography>
                 </Box>
               </Stack>
+
               <Divider />
               <Stack direction="row" sx={PositionStyle}>
                 <img
@@ -177,14 +260,28 @@ export default function ProductDetail() {
                 />
                 <Box>
                   <Typography variant="h6">
-                    قیمت فروشنده: {product.price} تومان
+                    قیمت فروشنده: {PN.convertEnToPe(product.price)} تومان
                   </Typography>
                 </Box>
               </Stack>
               <Divider />
+
+              <Stack direction="row" sx={PositionStyle}>
+                <img
+                  style={iconStyle}
+                  src={require("../assets/images/Vector3.png")}
+                />
+                <Typography variant="h6">
+                  تاریخ به روزرسانی:
+                  {PN.convertEnToPe(
+                    moment(product.updated_at).format("YYYY/MM/DD")
+                  )}
+                </Typography>
+              </Stack>
             </Grid>
           </Grid>
         </div>
+        <Stack mb="20px"></Stack>
         <Stack sx={[sellerColumn, { mb: "30px" }]}>
           <Typography
             variant="h4"
@@ -206,46 +303,51 @@ export default function ProductDetail() {
             }}
           />
 
-          <Stack direction={"row"} sx={sellersRow}>
-            <Grid container sx={{ alignItems: "center" }}>
-              <Grid item xs={1}>
-                <Typography variant="h3" sx={{ textAlign: "left" }}>
-                  فرامت
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography
-                  xs={6}
-                  sx={{ width: "340px", textAlign: "left", color: "black" }}
-                  variant="h6"
-                >
-                  تیرآهن بال نیم پهن مدل ST37-2 - سایز 14 - 12 متری ذوب آهن
-                  اصفهان
-                </Typography>
-              </Grid>
+          {biddings.map((bidding) => (
+            <Stack direction={"row"} sx={sellersRow}>
+              <Grid container sx={{ alignItems: "center" }}>
+                <Grid item xs={1}>
+                  <Typography variant="h3" sx={{ textAlign: "left" }}>
+                    {bidding.bidder.shop_name}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography
+                    xs={6}
+                    sx={{ width: "340px", textAlign: "left", color: "black" }}
+                    variant="h6"
+                  >
+                    تیرآهن بال نیم پهن مدل ST37-2 - سایز 14 - 12 متری ذوب آهن
+                    اصفهان
+                  </Typography>
+                </Grid>
 
-              <Grid item xs={2}>
-                <Typography variant="h4" sx={{ color: "secondary.main" }}>
-                  ۷,۵۰۰,۰۰۰
-                </Typography>
+                <Grid item xs={2}>
+                  <Typography variant="h4" sx={{ color: "secondary.main" }}>
+                    {PN.convertEnToPe(bidding.price)}
+                  </Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  <Button
+                    type="submit"
+                    variant="outlined"
+                    color="primary"
+                    size="small"
+                  >
+                    تماس با فروشنده
+                  </Button>
+                </Grid>
+                <Grid item xs={3}>
+                  <Typography variant="h6">
+                    آخرین تغییر قیمت فروشگاه:{" "}
+                    {PN.convertEnToPe(
+                      moment(bidding.updated_at).format("jYYYY/jMM/jDD")
+                    )}
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item xs={2}>
-                <Button
-                  type="submit"
-                  variant="outlined"
-                  color="primary"
-                  size="small"
-                >
-                  تماس با فروشنده
-                </Button>
-              </Grid>
-              <Grid item xs={3}>
-                <Typography variant="h6">
-                  آخرین تغییر قیمت فروشگاه: دیروز
-                </Typography>
-              </Grid>
-            </Grid>
-          </Stack>
+            </Stack>
+          ))}
 
           <Stack direction={"row"} sx={sellersRow}>
             <Grid container sx={{ alignItems: "center" }}>
@@ -321,6 +423,13 @@ export default function ProductDetail() {
           </Stack>
         </Stack>
       </Stack>
+      <BiddingDialog
+        open={openBidding}
+        handleClose={handleClose}
+        price={price}
+        handlePrice={handlePrice}
+        handleSubmitBidding={handleSubmitBidding}
+      />
     </>
   );
 }
