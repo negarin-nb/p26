@@ -13,6 +13,7 @@ const theme = createTheme({
     },
     custom: {
       main: "#E6E6E6",
+      dark: "#D9D9D9",
     },
     myWhite: {
       main: "#ffffff",

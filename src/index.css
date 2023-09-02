@@ -1,56 +1,47 @@
 @font-face {
-  font-family: 'Peyda';
+  font-family: "Peyda";
   font-weight: 100;
-  src: local("Peyda"),
-    url("./fonts/Peyda-Thin.ttf") format("truetype");
+  src: local("Peyda"), url("./fonts/Peyda-Thin.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Peyda';
+  font-family: "Peyda";
   font-weight: 200;
-  src: local("Peyda"),
-    url("./fonts/peyda-extralight.ttf") format("truetype");
+  src: local("Peyda"), url("./fonts/peyda-extralight.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Peyda';
+  font-family: "Peyda";
   font-weight: 300;
-  src: local("Peyda"),
-  url("./fonts/peyda-light.ttf") format("truetype");
+  src: local("Peyda"), url("./fonts/peyda-light.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Peyda';
+  font-family: "Peyda";
   font-weight: 400;
-  src: local("Peyda"),
-    url("./fonts/Peyda-Regular.ttf") format("truetype");
+  src: local("Peyda"), url("./fonts/Peyda-Regular.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Peyda';
+  font-family: "Peyda";
   font-weight: 500;
-  src: local("Peyda"),
-    url("./fonts/Peyda-Medium.ttf") format("truetype");
+  src: local("Peyda"), url("./fonts/Peyda-Medium.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Peyda';
+  font-family: "Peyda";
   font-weight: 600;
-  src: local("Peyda"),
-    url("./fonts/Peyda-SemiBold.ttf") format("truetype");
+  src: local("Peyda"), url("./fonts/Peyda-SemiBold.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Peyda';
+  font-family: "Peyda";
   font-weight: 700;
-  src: local("Peyda"),
-    url("./fonts/Peyda-Bold.ttf") format("truetype");
+  src: local("Peyda"), url("./fonts/Peyda-Bold.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Peyda';
+  font-family: "Peyda";
   font-weight: 800;
-  src: local("Peyda"),
-    url("./fonts/Peyda-ExtraBold.ttf") format("truetype");
+  src: local("Peyda"), url("./fonts/Peyda-ExtraBold.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Peyda';
+  font-family: "Peyda";
   font-weight: 900;
-  src: local("Peyda"),
-    url("./fonts/Peyda-Black.ttf") format("truetype");
+  src: local("Peyda"), url("./fonts/Peyda-Black.ttf") format("truetype");
 }
 
 body {
@@ -61,6 +52,6 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
