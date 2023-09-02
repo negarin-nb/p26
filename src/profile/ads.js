@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
-import { getProducts } from "../api/products";
-import productsApi from "../api/products";
 import PN from "persian-number";
 import {
   TableContainer,
@@ -12,13 +10,17 @@ import {
   TableBody,
   Stack,
   Typography,
-  InputLabel,
-  MenuItem,
-  Select,
+  Divider,
 } from "@mui/material";
-import ListProducts from "../components/listProducts";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import { Link } from "react-router-dom";
 import profileApi from "../api/profile";
+import moment from "jalali-moment";
 
 export default function Ads() {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -50,10 +52,29 @@ export default function Ads() {
     textAlign: "left",
   };
   const [products, setProducts] = useState([]);
+  const [deleteId, setDeleteId] = useState();
 
   const fetchProducts = async () => {
     const response = await profileApi.getMyProducts();
     setProducts(response.data.ListItems);
+  };
+
+  const deleteProduct = async (id) => {
+    const response = await profileApi.deleteMyProduct(id);
+    const _products = products.filter((product) => product.id !== id);
+    setProducts(_products);
+    handleClose();
+  };
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = (id) => {
+    setOpen(true);
+    setDeleteId(id);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -77,8 +98,9 @@ export default function Ads() {
                 <StyledTableCell>تولیدکننده</StyledTableCell>
                 <StyledTableCell>قیمت</StyledTableCell>
                 <StyledTableCell>تاریخ به روز رسانی</StyledTableCell>
-
+                <StyledTableCell>مشاهده</StyledTableCell>
                 <StyledTableCell>ویرایش</StyledTableCell>
+                <StyledTableCell>حذف</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -100,23 +122,88 @@ export default function Ads() {
                     {PN.convertEnToPe(product.price)}
                   </BodyTableCell>
 
-                  <BodyTableCell></BodyTableCell>
+                  <BodyTableCell>
+                    {PN.convertEnToPe(
+                      moment(product.updated_at).format("YYYY/MM/DD")
+                    )}
+                  </BodyTableCell>
                   <BodyTableCell
                     sx={{
                       "&:hover": {
                         color: "secondary.main",
                       },
                     }}
+                    to={`/product-detail/${product.id}`}
+                    state={product}
+                    component={Link}
                   >
-                    <Link to="/profile/edit-ad" state={product}>
-                      ویرایش
-                    </Link>
+                    مشاهده
+                  </BodyTableCell>
+                  <BodyTableCell
+                    sx={{
+                      "&:hover": {
+                        color: "secondary.main",
+                      },
+                    }}
+                    to="/profile/edit-ad"
+                    state={product}
+                    component={Link}
+                  >
+                    ویرایش
+                  </BodyTableCell>
+                  <BodyTableCell
+                    sx={{
+                      "&:hover": {
+                        color: "secondary.main",
+                      },
+                    }}
+                    onClick={() => handleClickOpen(product.id)}
+                  >
+                    حذف
                   </BodyTableCell>
                 </StyldedTableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
+        <Dialog
+          sx={{
+            "& .MuiDialog-paper": {
+              width: "300px",
+              maxHeight: 435,
+              padding: "30px",
+            },
+          }}
+          dir="rtl"
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle variant="h3" id="alert-dialog-title">
+            {"حذف آگهی"}
+          </DialogTitle>
+          <Divider />
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              آیا از حذف آگهی مورد نظر را مطمئن هستید؟
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions sx={{ justifyContent: "center" }}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                console.log(deleteId);
+                deleteProduct(deleteId);
+              }}
+            >
+              بله
+            </Button>
+            <Button variant="outlined" onClick={handleClose} autoFocus>
+              خیر
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Stack>
     </>
   );

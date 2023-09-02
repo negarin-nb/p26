@@ -30,8 +30,13 @@ export function getMyProducts() {
   return axios.get(`${apiUrl}/products/myproduct/`);
 }
 
+export function deleteMyProduct(id) {
+  return axios.delete(`${apiUrl}/products/myproduct/${id}/`);
+}
+
 export default {
   getProfile,
   editProfile,
   getMyProducts,
+  deleteMyProduct,
 };
