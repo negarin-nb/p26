@@ -11,11 +11,13 @@ import {
   MenuItem,
   Select,
   Typography,
+  Pagination,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Header from "../components/header";
 import ListProducts from "../components/listProducts";
 import productsApi from "../api/products";
+import PaginationCustom from "../components/pagination";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -29,6 +31,15 @@ export default function Products() {
 
   const [supplier, setSupplier] = useState("");
   const [producer, setProducer] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage, setPostsPerPage] = useState(40);
+
+  // const indexOfLastPost = currentPage * postsPerPage;
+  // const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  // const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const fetchProducts = async () => {
     const response = await productsApi.getProducts();
@@ -50,23 +61,30 @@ export default function Products() {
   useEffect(() => {
     fetchProducts();
     fetchCategories();
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
+    setAds(currentProducts);
   }, []);
 
   const handleCategorySelect = async (id) => {
+    setSubCategories([]);
     const _products = [...products];
     const _ads = _products.filter((product) => product.category === id);
     setAds(_ads);
     fetchSubCategories(id);
   };
 
-  // const handleSubCategorySelect = async (filterName) => {
-  //   const _products = [...products];
-  //   const _ads = _products.filter(
-  //     (product) =>
-  //       product.category === category.id && product.subCategory === filterName
-  //   );
-  //   setAds(_ads);
-  // };
+  const handleSubCategorySelect = async (subcategoryid, categoryid) => {
+    //  console.log(id);
+    const _products = [...products];
+    console.log(_products);
+    const _ads = _products.filter(
+      (product) =>
+        product.category === categoryid && product.subcategory === subcategoryid
+    );
+    setAds(_ads);
+  };
 
   const FormControlStyle = {
     backgroundColor: "custom.main",
@@ -168,9 +186,12 @@ export default function Products() {
                 >
                   {subCategories.map((subCategory) => (
                     <MenuItem
-                      // onClick={() => {
-                      //   handleSubCategorySelect(category);
-                      // }}
+                      onClick={() => {
+                        handleSubCategorySelect(subCategory.id, category.id);
+                        console.log("subCategory.id");
+                        console.log(subCategory.id);
+                        console.log(category);
+                      }}
                       dir="rtl"
                       value={subCategory}
                       key={subCategory.id}
@@ -224,6 +245,20 @@ export default function Products() {
         </div>
 
         <ListProducts ads={ads} />
+      </Stack>
+      {/* <Pagination
+        dir="rtl"
+        count={Math.ceil(products.length / postsPerPage)}
+        onChange={(e) => paginate(e.target.value)}
+        //  page={currentPage}
+        // onClick={}
+      /> */}
+      <Stack justifyContent="center" py="30px" direction="row">
+        <PaginationCustom
+          postsPerPage={postsPerPage}
+          totalPosts={products.length}
+          paginate={paginate}
+        />
       </Stack>
       {/* <TabContext value={value}>
         <TabList
