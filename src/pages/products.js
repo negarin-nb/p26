@@ -35,25 +35,11 @@ export default function Products() {
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(30);
 
-  // const indexOfLastPost = currentPage * postsPerPage;
-  // const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  // const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
-
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    // const indexOfLastPost = currentPage * postsPerPage;
-    // const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    // const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
-    // setAds(currentProducts);
-  };
-
   const fetchProducts = async () => {
     const response = await productsApi.getProducts();
     const _products = JSON.parse(JSON.stringify(response.data.ListItems));
-    //setAds(_products);
     arrangePage(_products);
     setProducts(response.data.ListItems);
-    //  console.log(response.data.ListItems);
   };
 
   const fetchCategories = async () => {
@@ -64,6 +50,27 @@ export default function Products() {
   const fetchSubCategories = async (id) => {
     const response = await productsApi.getSubCategories(id);
     setSubCategories(response.data.ListItems);
+  };
+
+  const handleCategorySelect = async (id) => {
+    setSubCategories([]);
+    const _products = [...products];
+    const _ads = _products.filter((product) => product.category === id);
+    setAds(_ads);
+    fetchSubCategories(id);
+  };
+
+  const handleSubCategorySelect = async (subcategoryid, categoryid) => {
+    const _products = [...products];
+    console.log(_products);
+    const _ads = _products.filter(
+      (product) =>
+        product.category === categoryid && product.subcategory === subcategoryid
+    );
+    setAds(_ads);
+  };
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   const arrangePage = (products) => {
@@ -80,30 +87,7 @@ export default function Products() {
 
   useEffect(() => {
     arrangePage(products);
-    // const indexOfLastPost = currentPage * postsPerPage;
-    // const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    // const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
-    // setAds(currentProducts);
   }, [currentPage]);
-
-  const handleCategorySelect = async (id) => {
-    setSubCategories([]);
-    const _products = [...products];
-    const _ads = _products.filter((product) => product.category === id);
-    setAds(_ads);
-    fetchSubCategories(id);
-  };
-
-  const handleSubCategorySelect = async (subcategoryid, categoryid) => {
-    //  console.log(id);
-    const _products = [...products];
-    console.log(_products);
-    const _ads = _products.filter(
-      (product) =>
-        product.category === categoryid && product.subcategory === subcategoryid
-    );
-    setAds(_ads);
-  };
 
   const FormControlStyle = {
     backgroundColor: "custom.main",
@@ -265,22 +249,17 @@ export default function Products() {
 
         <ListProducts ads={ads} />
       </Stack>
-      {/* <Pagination
-        dir="rtl"
-        count={Math.ceil(products.length / postsPerPage)}
-        onChange={(e) => paginate(e.target.value)}
-        //  page={currentPage}
-        // onClick={}
-      /> */}
-      {ads.length >= postsPerPage && (
-        <Stack justifyContent="center" py="30px" direction="row">
+
+      {
+        <Stack justifyContent="center" py="40px" direction="row" ml="260px">
           <PaginationCustom
             postsPerPage={postsPerPage}
             totalPosts={products.length}
+            currentPage={currentPage}
             paginate={paginate}
           />
         </Stack>
-      )}
+      }
       {/* <TabContext value={value}>
         <TabList
           dir="rtl"

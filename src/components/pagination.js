@@ -3,33 +3,40 @@ import PN from "persian-number";
 
 import React from "react";
 
-const Pagination = ({ postsPerPage, totalPosts, paginate }) => {
+const Pagination = ({ postsPerPage, totalPosts, paginate, currentPage }) => {
   const pageNumbers = [];
 
   for (let i = 1; i <= Math.ceil(totalPosts / postsPerPage); i++) {
     pageNumbers.push(i);
   }
 
+  const noActivePageStyle = {
+    textDecoration: "none",
+    px: "8px",
+    "&:hover": { color: "gray" },
+    cursor: "pointer",
+  };
+
+  const activePageStyle = {
+    textDecoration: "none",
+    px: "8px",
+    color: "gray",
+
+    "&:hover": { color: "gray" },
+    cursor: "pointer",
+  };
+
   return (
     //<nav>
-    <Stack direction="row" dir="ltr">
-      {pageNumbers.map((number) => (
-        // <li key={number} className="page-item">
+    <Stack direction="row">
+      {pageNumbers.reverse().map((number) => (
         <Link
           onClick={() => paginate(number)}
-          sx={{
-            textDecoration: "none",
-            px: "5px",
-            "&:hover": { color: "gray" },
-
-            cursor: "pointer",
-            direction: "rtl",
-          }}
+          sx={currentPage === number ? activePageStyle : noActivePageStyle}
           variant="h6"
         >
           {PN.convertEnToPe(number)}
         </Link>
-        // </li>
       ))}
     </Stack>
     //  </nav>
