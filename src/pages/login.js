@@ -7,6 +7,7 @@ import {
   Stack,
   Snackbar,
   Alert,
+  Link,
 } from "@mui/material";
 import Header from "../components/header";
 import OutlinedInput from "@mui/material/OutlinedInput";
@@ -148,6 +149,10 @@ export default function Login() {
               />
             </FormControl>
           </form>
+          <Typography>
+            ثبت نام نکرده‌اید؟
+            <Link href="/register">ثبت‌نام</Link>
+          </Typography>
           <Button
             type="submit"
             variant="contained"

@@ -12,34 +12,35 @@ import {
 import productsApi from "../api/products";
 import moment from "jalali-moment";
 import PN from "persian-number";
-import { useParams } from "react-router-dom";
-import profileApi from "../api/profile";
-import { useProfile } from "../contex/profileContext";
-import BiddingDialog from "../components/biddingDialog";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/header";
 import biddingApi from "../api/bidding";
+import { useAuth } from "../contex/authContext";
+import LoginDialog from "../components/dialogs/loginDialog";
+import BiddingDialog from "../components/dialogs/biddingDialog";
 
 export default function ProductDetail() {
   const [product, setProduct] = useState({});
-  const [shopName, setShopName] = useState("");
   const [biddings, setBiddings] = useState([]);
-  const { id } = useParams();
-  const profileCtx = useProfile();
-  const [openBidding, setOpenBidding] = useState(false);
+  const [openBid, setOpenBid] = useState(false);
+  const [openLogin, setOpenLogin] = useState(false);
   const [price, setPrice] = useState("");
+  const [showPhoneNumber, setShowPhoneNumber] = useState([false]);
+  const { id } = useParams();
+  const authCtx = useAuth();
+  const navigation = useNavigate();
 
   const handlePrice = (p) => {
     setPrice(PN.convertEnToPe(p));
   };
-  const handleClickOpen = () => {
-    setOpenBidding(true);
-  };
 
-  const handleClose = () => {
-    setOpenBidding(false);
+  const handleClickOpenBid = () => {
+    setOpenBid(true);
+  };
+  const handleCloseBid = () => {
+    setOpenBid(false);
     setPrice("");
   };
-
   const handleSubmitBidding = async () => {
     let _price = PN.convertPeToEn(price);
     const response = await biddingApi.createBid({
@@ -47,9 +48,27 @@ export default function ProductDetail() {
       price: parseInt(_price, 10),
     });
     console.log(response.data);
-    handleClose();
+    handleCloseBid();
   };
 
+  const handleCloseLogin = () => {
+    setOpenLogin(false);
+  };
+
+  const handleSubmitLogin = () => {
+    handleCloseLogin();
+    navigation("/login");
+  };
+
+  const handleCallButton = (id) => {
+    if (!!authCtx.token) {
+      const _s = [...showPhoneNumber];
+      _s[id] = true;
+      setShowPhoneNumber(_s);
+    } else {
+      setOpenLogin(true);
+    }
+  };
   const fetchProduct = async (productId) => {
     const response = await productsApi.getProduct(productId);
     console.log(response.data);
@@ -65,22 +84,20 @@ export default function ProductDetail() {
     setBiddings(response.data.Item.biddings);
     // console.log(product.biddings);
   };
-
-  const fetchProfile = async () => {
-    const response = await profileApi.getProfile();
-    console.log(response.data);
-    setShopName(response.data.Item.shop_name);
-    profileCtx.setProfile(response.data.Item);
-  };
-
+  // const fetchProfile = async () => {
+  //   const response = await profileApi.getProfile();
+  //   // console.log(response.data);
+  //   // setShopName(response.data.Item.shop_name);
+  //   // profileCtx.setProfile(response.data.Item);
+  // };
   useEffect(() => {
     console.log(id);
     fetchProduct(id);
-    console.log("userProfile");
-    console.log(profileCtx.userProfile);
-    if (!profileCtx.userProfile.shopName) {
-      fetchProfile();
-    }
+    // console.log("userProfile");
+    // console.log(profileCtx.userProfile);
+    // if (!profileCtx.userProfile.shopName) {
+    //   fetchProfile();
+    // }
   }, []);
 
   const imageColumn = {
@@ -88,7 +105,6 @@ export default function ProductDetail() {
     height: "330px",
     justifyContent: "center",
     alignItems: "center",
-    // display: "inline",
   };
   const titleColumn = {
     paddingInline: "30px",
@@ -201,7 +217,7 @@ export default function ProductDetail() {
                 <Button
                   sx={{ marginTop: "10px" }}
                   variant="outlined"
-                  onClick={handleClickOpen}
+                  onClick={handleClickOpenBid}
                 >
                   پیشنهاد قیمت
                 </Button>
@@ -224,7 +240,7 @@ export default function ProductDetail() {
                   src={require("../assets/images/Vector3.png")}
                 />
                 <Box>
-                  <Typography variant="h6">فروشنده : {shopName}</Typography>
+                  <Typography variant="h6">فروشنده : </Typography>
                 </Box>
               </Stack>
               <Divider />
@@ -303,51 +319,69 @@ export default function ProductDetail() {
             }}
           />
 
-          {biddings.map((bidding) => (
-            <Stack direction={"row"} sx={sellersRow}>
-              <Grid container sx={{ alignItems: "center" }}>
-                <Grid item xs={1}>
-                  <Typography variant="h3" sx={{ textAlign: "left" }}>
-                    {bidding.bidder.shop_name}
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography
-                    xs={6}
-                    sx={{ width: "340px", textAlign: "left", color: "black" }}
-                    variant="h6"
-                  >
-                    تیرآهن بال نیم پهن مدل ST37-2 - سایز 14 - 12 متری ذوب آهن
-                    اصفهان
-                  </Typography>
-                </Grid>
+          {/* biddings */}
 
-                <Grid item xs={2}>
-                  <Typography variant="h4" sx={{ color: "secondary.main" }}>
-                    {PN.convertEnToPe(bidding.price)}
-                  </Typography>
-                </Grid>
-                <Grid item xs={2}>
-                  <Button
-                    type="submit"
-                    variant="outlined"
-                    color="primary"
-                    size="small"
-                  >
-                    تماس با فروشنده
-                  </Button>
-                </Grid>
-                <Grid item xs={3}>
-                  <Typography variant="h6">
-                    آخرین تغییر قیمت فروشگاه:{" "}
-                    {PN.convertEnToPe(
-                      moment(bidding.updated_at).format("jYYYY/jMM/jDD")
+          {biddings[0] &&
+            biddings.map((bidding) => (
+              <Stack
+                height="30px"
+                key={bidding.id}
+                direction={"row"}
+                sx={sellersRow}
+              >
+                <Grid container sx={{ alignItems: "center" }}>
+                  <Grid item xs={1}>
+                    <Typography variant="h3" sx={{ textAlign: "left" }}>
+                      {bidding.bidder.shop_name}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography
+                      xs={6}
+                      sx={{
+                        width: "340px",
+                        textAlign: "center",
+                        color: "black",
+                      }}
+                      variant="h6"
+                    >
+                      {bidding.bidder.description}
+                    </Typography>
+                  </Grid>
+
+                  <Grid item xs={2}>
+                    <Typography variant="h4" sx={{ color: "secondary.main" }}>
+                      {PN.convertEnToPe(bidding.price)}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={2}>
+                    {showPhoneNumber[bidding.id] ? (
+                      <Typography variant="h5">
+                        {PN.convertEnToPe(bidding.bidder.phone_number)}
+                      </Typography>
+                    ) : (
+                      <Button
+                        type="submit"
+                        variant="outlined"
+                        color="primary"
+                        size="small"
+                        onClick={() => handleCallButton(bidding.id)}
+                      >
+                        تماس با فروشنده
+                      </Button>
                     )}
-                  </Typography>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Typography variant="h6">
+                      آخرین تغییر قیمت فروشگاه:{" "}
+                      {PN.convertEnToPe(
+                        moment(bidding.updated_at).format("jYYYY/jMM/jDD")
+                      )}
+                    </Typography>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </Stack>
-          ))}
+              </Stack>
+            ))}
 
           <Stack direction={"row"} sx={sellersRow}>
             <Grid container sx={{ alignItems: "center" }}>
@@ -389,6 +423,9 @@ export default function ProductDetail() {
             </Grid>
           </Stack>
         </Stack>
+
+        {/* description */}
+
         <Stack sx={[sellerColumn, { mb: "30px" }]}>
           <Typography
             variant="h4"
@@ -424,11 +461,16 @@ export default function ProductDetail() {
         </Stack>
       </Stack>
       <BiddingDialog
-        open={openBidding}
-        handleClose={handleClose}
+        open={openBid}
+        handleClose={handleCloseBid}
         price={price}
         handlePrice={handlePrice}
         handleSubmitBidding={handleSubmitBidding}
+      />
+      <LoginDialog
+        open={openLogin}
+        handleClose={handleCloseLogin}
+        handleSubmitLogin={handleSubmitLogin}
       />
     </>
   );
