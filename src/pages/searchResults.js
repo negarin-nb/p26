@@ -15,14 +15,19 @@ import buttonIcons from "../assets/buttonIcons/ButtonIcons";
 import HomeButton from "../components/homeButton";
 import FilterProduct from "../components/filterProduct";
 import productsApi from "../api/products";
+import Pagination from "../components/pagination";
 
 export default function SearchResult() {
+  const [products, setProducts] = useState([]);
   const [ads, setAds] = useState([]);
   const [searchIn, setSearchIn] = useState("");
   const [value, setValue] = React.useState("1");
 
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage, setPostsPerPage] = useState(30);
 
   let state = useLocation().state;
   // console.log(state);
@@ -33,12 +38,31 @@ export default function SearchResult() {
   const fetchSearchResult = async () => {
     const response = await searchApi.search(searchInput);
     //console.log(response.data);
-    setAds(response.data.Item);
+    //setAds(response.data.Item);
+    setProducts(response.data.Item);
+
+    const _ads = JSON.parse(JSON.stringify(response.data.Item));
+    arrangePage(_ads);
   };
   const fetchFilterResult = async (id) => {
     const response = await searchApi.filter(id);
     // console.log(response.data.Item);
-    setAds(response.data.Item);
+    // setAds(response.data.Item);
+    setProducts(response.data.Item);
+
+    const _ads = JSON.parse(JSON.stringify(response.data.Item));
+    arrangePage(_ads);
+  };
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const arrangePage = (products) => {
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
+    setAds(currentProducts);
   };
 
   const fetchCategories = async () => {
@@ -82,6 +106,10 @@ export default function SearchResult() {
       fetchCategories();
     }
   }, []);
+
+  useEffect(() => {
+    arrangePage(products);
+  }, [currentPage]);
 
   // useEffect(() => {
   //   fetchSubCategories(searchInput);
@@ -130,6 +158,17 @@ export default function SearchResult() {
               <ListProducts ads={ads} />
             </Stack>
           )}
+
+          {
+            <Stack justifyContent="center" py="40px" direction="row" ml="260px">
+              <Pagination
+                postsPerPage={postsPerPage}
+                totalPosts={products.length}
+                currentPage={currentPage}
+                paginate={paginate}
+              />
+            </Stack>
+          }
         </Stack>
       </Stack>
     </div>
