@@ -30,7 +30,8 @@ export default function SearchResult() {
   const [postsPerPage, setPostsPerPage] = useState(30);
 
   let state = useLocation().state;
-  // console.log(state);
+  console.log("state");
+  console.log(state);
 
   const { searchInput } = useParams();
   //console.log(searchInput);
@@ -40,7 +41,6 @@ export default function SearchResult() {
     //console.log(response.data);
     //setAds(response.data.Item);
     setProducts(response.data.Item);
-
     const _ads = JSON.parse(JSON.stringify(response.data.Item));
     arrangePage(_ads);
   };
@@ -49,7 +49,6 @@ export default function SearchResult() {
     // console.log(response.data.Item);
     // setAds(response.data.Item);
     setProducts(response.data.Item);
-
     const _ads = JSON.parse(JSON.stringify(response.data.Item));
     arrangePage(_ads);
   };
@@ -99,7 +98,6 @@ export default function SearchResult() {
   useEffect(() => {
     if (state) {
       fetchFilterResult(searchInput);
-
       fetchSubCategories(searchInput);
     } else {
       fetchSearchResult();
