@@ -31,6 +31,7 @@ const Pagination = ({ postsPerPage, totalPosts, paginate, currentPage }) => {
     <Stack direction="row">
       {pageNumbers.reverse().map((number) => (
         <Link
+          key={number}
           onClick={() => paginate(number)}
           sx={currentPage === number ? activePageStyle : noActivePageStyle}
           variant="h6"
