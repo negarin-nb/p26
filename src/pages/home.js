@@ -12,9 +12,7 @@ export default function Home() {
   const [searchInput, setSearchInput] = useState("");
 
   const handleSubmitButton = () => {
-    navigate(`/results/${searchInput}`, {
-      state: "title",
-    });
+    navigate(`/results/${searchInput}`);
   };
   const handleSubmitEnter = (e) => {
     if (e.key === "Enter") navigate(`/results/${searchInput}`);
@@ -83,6 +81,7 @@ export default function Home() {
         >
           {ButtonIcons.map((buttonIcon) => (
             <HomeButton
+              key={buttonIcon.id}
               svgIcon={buttonIcon.svg}
               title={buttonIcon.title}
               id={buttonIcon.id}
