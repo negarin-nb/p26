@@ -81,7 +81,7 @@ export default function ProductDetail() {
       subcategorytitle: response.data.Item.subcategory.title,
     };
     setProduct(_product);
-    setBiddings(response.data.Item.biddings);
+    if (response.data.Item.biddings) setBiddings(response.data.Item.biddings);
     // console.log(product.biddings);
   };
   // const fetchProfile = async () => {
@@ -321,7 +321,7 @@ export default function ProductDetail() {
 
           {/* biddings */}
 
-          {biddings[0] &&
+          {!!biddings[0] &&
             biddings.map((bidding) => (
               <Stack
                 height="30px"
@@ -383,7 +383,7 @@ export default function ProductDetail() {
               </Stack>
             ))}
 
-          <Stack direction={"row"} sx={sellersRow}>
+          {/* <Stack direction={"row"} sx={sellersRow}>
             <Grid container sx={{ alignItems: "center" }}>
               <Grid item xs={1}>
                 <Typography variant="h3" sx={{ textAlign: "left" }}>
@@ -421,7 +421,7 @@ export default function ProductDetail() {
                 </Typography>
               </Grid>
             </Grid>
-          </Stack>
+          </Stack> */}
         </Stack>
 
         {/* description */}
