@@ -6,6 +6,7 @@ import Header from "../components/header";
 import HomeButton from "../components/homeButton";
 import { useNavigate } from "react-router-dom";
 import ButtonIcons from "../assets/buttonIcons/ButtonIcons";
+import { LineChart } from "@mui/x-charts/LineChart";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -90,6 +91,17 @@ export default function Home() {
           ))}
         </Stack>
       </Stack>
+
+      <LineChart
+        xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+        series={[
+          {
+            data: [2, 5.5, 2, 8.5, 1.5, 5],
+          },
+        ]}
+        width={500}
+        height={300}
+      />
     </Box>
   );
 }

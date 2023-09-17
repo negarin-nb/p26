@@ -9,6 +9,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { LineChart } from "@mui/x-charts/LineChart";
 export default function Subscription() {
   const [adSubscription, setAdSubscription] = useState([]);
   const [callSubscription, setCallSubscription] = useState([]);
@@ -87,6 +88,15 @@ export default function Subscription() {
     alignItems: "center",
     padding: "20px",
   };
+
+  const valueFormatter = (num) => {
+    return ` ${PN.convertEnToPe(num)} `;
+  };
+
+  const chartsParams = {
+    // margin: { top: 40, bottom: 30, left: 50, right: 10 },
+    height: 300,
+  };
   const cardTitle = { color: "white", marginBlock: "20px" };
   return (
     <>
@@ -96,6 +106,34 @@ export default function Subscription() {
       <Typography sx={{ textAlign: "left", marginTop: "20px" }} variant="h2">
         موجودی اشتراک تماس : {PN.convertEnToPe(credit)} تومان
       </Typography>
+      <Divider sx={{ marginTop: "30px" }} />
+      <Stack alignItems="center">
+        <LineChart
+          xAxis={[
+            {
+              scaleType: "band",
+              data: ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور"],
+            },
+          ]}
+          yAxis={[
+            {
+              valueFormatter,
+              data: [0, 200000, 550000, 200000, 850000, 150000, 500000],
+            },
+          ]}
+          series={[
+            {
+              valueFormatter,
+              color: "#FF4D00",
+              curve: "catmullRom",
+              data: [200000, 550000, 200000, 850000, 150000, 500000],
+            },
+          ]}
+          {...chartsParams}
+          margin={{ top: 40, bottom: 30, left: 50, right: 10 }}
+          height={300}
+        />
+      </Stack>
       <Divider sx={{ marginBlock: "30px" }} />
       <Typography sx={{ textAlign: "left", marginBlock: "20px" }} variant="h2">
         بسته‌های اشتراک آگهی
@@ -199,7 +237,7 @@ export default function Subscription() {
 
                 <DialogContent>
                   <DialogContentText id="alert-dialog-description">
-                    آیا از خرید اشتراک مورد نظر را مطمئن هستید؟
+                    آیا از خرید اشتراک مورد نظر مطمئن هستید؟
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: "center" }}>

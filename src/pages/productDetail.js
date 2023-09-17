@@ -35,7 +35,11 @@ export default function ProductDetail() {
   };
 
   const handleClickOpenBid = () => {
-    setOpenBid(true);
+    if (!!authCtx.token) {
+      setOpenBid(true);
+    } else {
+      setOpenLogin(true);
+    }
   };
   const handleCloseBid = () => {
     setOpenBid(false);
@@ -51,15 +55,6 @@ export default function ProductDetail() {
     handleCloseBid();
   };
 
-  const handleCloseLogin = () => {
-    setOpenLogin(false);
-  };
-
-  const handleSubmitLogin = () => {
-    handleCloseLogin();
-    navigation("/login");
-  };
-
   const handleCallButton = (id) => {
     if (!!authCtx.token) {
       const _s = [...showPhoneNumber];
@@ -69,6 +64,16 @@ export default function ProductDetail() {
       setOpenLogin(true);
     }
   };
+
+  const handleCloseLogin = () => {
+    setOpenLogin(false);
+  };
+
+  const handleSubmitLogin = () => {
+    handleCloseLogin();
+    navigation("/login");
+  };
+
   const fetchProduct = async (productId) => {
     const response = await productsApi.getProduct(productId);
     console.log(response.data);
@@ -147,7 +152,7 @@ export default function ProductDetail() {
             خانه {`>`} {product.categorytitle} {`>`} {product.subcategorytitle}{" "}
             {`>`} {product.title}
           </Typography>
-          <Grid container sx={{ marginBlock: "30px" }}>
+          <Grid container sx={{ marginBlock: "10px" }}>
             <Grid item xs={4}>
               <Paper elevation={2} sx={imageColumn}>
                 <Stack

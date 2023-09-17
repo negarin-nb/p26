@@ -40,16 +40,16 @@ export default function SearchResult() {
     const response = await searchApi.search(searchInput);
     //console.log(response.data);
     //setAds(response.data.Item);
-    setProducts(response.data.Item);
-    const _ads = JSON.parse(JSON.stringify(response.data.Item));
+    setProducts(response.data.ListItems);
+    const _ads = JSON.parse(JSON.stringify(response.data.ListItems));
     arrangePage(_ads);
   };
   const fetchFilterResult = async (id) => {
     const response = await searchApi.filter(id);
     // console.log(response.data.Item);
     // setAds(response.data.Item);
-    setProducts(response.data.Item);
-    const _ads = JSON.parse(JSON.stringify(response.data.Item));
+    setProducts(response.data.ListItems);
+    const _ads = JSON.parse(JSON.stringify(response.data.ListItems));
     arrangePage(_ads);
   };
 

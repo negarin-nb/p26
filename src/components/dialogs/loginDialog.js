@@ -18,10 +18,10 @@ export default function LoginDialog({ handleClose, open, handleSubmitLogin }) {
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle variant="h3">مشاهده اطلاعات تماس</DialogTitle>
+      <DialogTitle variant="h3">ورود به حساب کاربری</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          برای مشاهده اطلاعات تماس لطفا وارد شوید.
+          لطفا ابتدا به وارد حساب کاربری خود شوید.
         </DialogContentText>
       </DialogContent>
       <DialogActions sx={{ justifyContent: "center" }}>

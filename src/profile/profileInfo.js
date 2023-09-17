@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import {
   TextField,
   Button,
-  Paper,
   Typography,
   Stack,
   Grid,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { useProfile } from "../contex/profileContext";
 import profileApi from "../api/profile";
@@ -23,6 +24,19 @@ export default function ProfileInfo() {
     shopName: "",
   });
   const profileCtx = useProfile();
+
+  const [open, setOpen] = useState(false);
+  const [severity, setSeverity] = useState("");
+  const [message, setMessage] = useState("");
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const openAlert = (s, m) => {
+    setSeverity(s);
+    setMessage(m);
+    setOpen(true);
+  };
+
   const fetchProfile = async () => {
     const response = await profileApi.getProfile();
     //  console.log(response.data);
@@ -49,9 +63,15 @@ export default function ProfileInfo() {
   }, []);
 
   const handleEditProfile = async (profile) => {
-    const response = await profileApi.editProfile(profile);
-    profileCtx.setProfile(profile);
-    console.log(response.data);
+    try {
+      const response = await profileApi.editProfile(profile);
+      profileCtx.setProfile(profile);
+      console.log(response.data);
+      openAlert("success", "ویرایش حساب کاربری با موفقیت انجام شد.");
+    } catch (error) {
+      openAlert("error", "عملیات با خطا مواجه شده است.");
+      console.log(error);
+    }
   };
 
   const titleStyle = {
@@ -219,6 +239,21 @@ export default function ProfileInfo() {
           >
             ویرایش اطلاعات
           </Button>
+
+          <Snackbar
+            dir="rtl"
+            open={open}
+            autoHideDuration={4000}
+            onClose={handleClose}
+          >
+            <Alert
+              onClose={handleClose}
+              severity={severity}
+              sx={{ width: "100%" }}
+            >
+              {message}
+            </Alert>
+          </Snackbar>
         </Stack>
       </form>
     </>

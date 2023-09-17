@@ -11,6 +11,8 @@ import {
   Stack,
   Typography,
   Divider,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -54,27 +56,45 @@ export default function Ads() {
   const [products, setProducts] = useState([]);
   const [deleteId, setDeleteId] = useState();
 
+  const [open, setOpen] = useState(false);
+  const [severity, setSeverity] = useState("");
+  const [message, setMessage] = useState("");
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const openAlert = (s, m) => {
+    setSeverity(s);
+    setMessage(m);
+    setOpen(true);
+  };
+
   const fetchProducts = async () => {
     const response = await profileApi.getMyProducts();
     setProducts(response.data.ListItems);
   };
 
   const deleteProduct = async (id) => {
-    const response = await profileApi.deleteMyProduct(id);
-    const _products = products.filter((product) => product.id !== id);
-    setProducts(_products);
-    handleClose();
+    try {
+      const response = await profileApi.deleteMyProduct(id);
+      const _products = products.filter((product) => product.id !== id);
+      setProducts(_products);
+      handleCloseDelete();
+      openAlert("success", "آگهی با موفقیت حذف شد.");
+    } catch (error) {
+      openAlert("error", "عملیات با خطا مواجه شده است.");
+      console.log(error);
+    }
   };
 
-  const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
 
-  const handleClickOpen = (id) => {
-    setOpen(true);
+  const handleClickOpenDelete = (id) => {
+    setOpenDelete(true);
     setDeleteId(id);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
   };
 
   useEffect(() => {
@@ -155,9 +175,10 @@ export default function Ads() {
                     sx={{
                       "&:hover": {
                         color: "secondary.main",
+                        cursor: "pointer",
                       },
                     }}
-                    onClick={() => handleClickOpen(product.id)}
+                    onClick={() => handleClickOpenDelete(product.id)}
                   >
                     حذف
                   </BodyTableCell>
@@ -175,8 +196,8 @@ export default function Ads() {
             },
           }}
           dir="rtl"
-          open={open}
-          onClose={handleClose}
+          open={openDelete}
+          onClose={handleCloseDelete}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
@@ -199,11 +220,26 @@ export default function Ads() {
             >
               بله
             </Button>
-            <Button variant="outlined" onClick={handleClose} autoFocus>
+            <Button variant="outlined" onClick={handleCloseDelete} autoFocus>
               خیر
             </Button>
           </DialogActions>
         </Dialog>
+
+        <Snackbar
+          dir="rtl"
+          open={open}
+          autoHideDuration={4000}
+          onClose={handleClose}
+        >
+          <Alert
+            onClose={handleClose}
+            severity={severity}
+            sx={{ width: "100%" }}
+          >
+            {message}
+          </Alert>
+        </Snackbar>
       </Stack>
     </>
   );
