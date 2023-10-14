@@ -12,9 +12,12 @@ import {
   Select,
   Snackbar,
   Alert,
+  Autocomplete,
 } from "@mui/material";
 import subscrptionApi from "../api/subscrption";
 import productsApi from "../api/products";
+import profileApi from "../api/profile";
+
 import TextareaAutosize from "@mui/base/TextareaAutosize";
 import PN from "persian-number";
 
@@ -24,6 +27,23 @@ export default function AdInsert({ editData }) {
 
   const form = new FormData();
   const formdata = new FormData();
+
+  const [productDataList, setProductDataList] = useState({
+    alloy: [],
+    producer: [],
+    supplier: [],
+    mode: [],
+    color: [],
+    unit: [],
+    mode: [],
+    size: [],
+    thickness: [],
+    length: [],
+    height: [],
+    weight: [],
+    width: [],
+    standard: [],
+  });
 
   const [productData, setProductData] = useState({
     image: null,
@@ -66,6 +86,108 @@ export default function AdInsert({ editData }) {
     setOpen(true);
   };
 
+  const fetchProductDataLists = async (field, content) => {
+    const response = await productsApi.autoComplete(field, content);
+
+    switch (field) {
+      case "alloy":
+        setProductDataList({
+          ...productDataList,
+          alloy: [...response.data.ListItems],
+        });
+        console.log(productDataList);
+        console.log("alloy");
+        break;
+      case "mode":
+        setProductDataList({
+          ...productDataList,
+          mode: [...response.data.ListItems],
+        });
+        console.log(productDataList);
+        console.log("mode");
+        break;
+      case "size":
+        setProductDataList({
+          ...productDataList,
+          size: [...response.data.ListItems],
+        });
+        console.log(productDataList);
+        console.log("size");
+        break;
+      case "unit":
+        setProductDataList({
+          ...productDataList,
+          unit: [...response.data.ListItems],
+        });
+        console.log(productDataList);
+        console.log("unit");
+        break;
+      case "color":
+        setProductDataList({
+          ...productDataList,
+          color: [...response.data.ListItems],
+        });
+        break;
+      case "producer":
+        setProductDataList({
+          ...productDataList,
+          producer: [...response.data.ListItems],
+        });
+        console.log("producer");
+        break;
+      case "supplier":
+        setProductDataList({
+          ...productDataList,
+          supplier: [...response.data.ListItems],
+        });
+        console.log("supplier");
+        break;
+
+      case "weight":
+        setProductDataList({
+          ...productDataList,
+          weight: [...response.data.ListItems],
+        });
+        console.log("weight");
+        break;
+      case "height":
+        setProductDataList({
+          ...productDataList,
+          height: [...response.data.ListItems],
+        });
+        console.log("height");
+        break;
+      case "length":
+        setProductDataList({
+          ...productDataList,
+          length: [...response.data.ListItems],
+        });
+        console.log("length");
+        break;
+      case "width":
+        setProductDataList({
+          ...productDataList,
+          width: [...response.data.ListItems],
+        });
+        console.log("width");
+        break;
+      case "thickness":
+        setProductDataList({
+          ...productDataList,
+          thickness: [...response.data.ListItems],
+        });
+        console.log("thickness");
+        break;
+      case "standard":
+        setProductDataList({
+          ...productDataList,
+          standard: [...response.data.ListItems],
+        });
+        console.log("standard");
+        break;
+    }
+  };
+
   const fetchCategories = async () => {
     const response = await productsApi.getCategories();
     setProductList(response.data.ListItems);
@@ -75,6 +197,10 @@ export default function AdInsert({ editData }) {
     if (editData) {
       console.log(editData);
       setProductData(editData);
+      setProductData({
+        ...editData,
+        price: PN.convertEnToPe(editData.price),
+      });
     }
     fetchCategories();
   }, []);
@@ -84,12 +210,12 @@ export default function AdInsert({ editData }) {
     setSubCategories(response.data.ListItems);
   };
 
-  const handleAdSubmit = async (form) => {
+  const handleAdSubmit = async () => {
     const formData = new FormData();
     formData.append("title", productData.title);
     formData.append("description", productData.description);
     formData.append("alloy", productData.alloy);
-    formData.append("color", productData.link);
+    formData.append("color", productData.color);
     formData.append("link", productData.link);
     formData.append("length", productData.length);
     formData.append("height", productData.height);
@@ -109,40 +235,55 @@ export default function AdInsert({ editData }) {
     formData.append("subcategory_id", productData.subCategory_id);
     formData.append("category_id", productData.category_id);
     formData.append("image", productData.image);
-    for (const value of form.values()) {
-      console.log(value);
-    }
+
+    // for (const value of formData.values()) {
+    //   console.log(value);
+    // }
+
+    let response = "";
+    console.log("editData");
+    console.log(editData);
 
     try {
-      const response = await productsApi.createProduct(formData);
-      console.log(response.data);
-      openAlert("success", "آگهی با موفقیت ثبت شد.");
-      setProductData({
-        image: null,
-        title: "",
-        category: "",
-        category_id: 0,
-        subCategory: "",
-        subCategory_id: 0,
-        alloy: "",
-        color: "",
-        unit: "",
-        mode: "",
-        size: "",
-        thickness: "",
-        width: "",
-        length: "",
-        height: "",
-        standard: "",
-        weight: "",
-        price: "",
-        supplier: "",
-        delivery: "",
-        producer: "",
-        link: "",
-        tel: "",
-        description: "",
-      });
+      if (!!editData) {
+        formData.append("id", editData.id);
+        console.log("formData");
+        for (const value of formData.entries()) {
+          console.log(value[0] + "-" + value[1]);
+        }
+        response = await profileApi.editMyProduct(formData);
+        openAlert("success", "تغییرات با موفقیت ثبت شد.");
+      } else {
+        response = await productsApi.createProduct(formData);
+        console.log(response.data);
+        openAlert("success", "آگهی با موفقیت ثبت شد.");
+        setProductData({
+          image: null,
+          title: "",
+          category: "",
+          category_id: 0,
+          subCategory: "",
+          subCategory_id: 0,
+          alloy: "",
+          color: "",
+          unit: "",
+          mode: "",
+          size: "",
+          thickness: "",
+          width: "",
+          length: "",
+          height: "",
+          standard: "",
+          weight: "",
+          price: "",
+          supplier: "",
+          delivery: "",
+          producer: "",
+          link: "",
+          tel: "",
+          description: "",
+        });
+      }
     } catch (error) {
       openAlert("error", "مشکلی پیش آمده است.");
       console.log(error);
@@ -234,45 +375,86 @@ export default function AdInsert({ editData }) {
               </Select>
             </FormControl>
 
-            <TextField
-              value={productData.mode}
-              onChange={(event) => {
+            <Autocomplete
+              disablePortal
+              freeSolo
+              id="combo-box-demo"
+              options={productDataList.mode}
+              inputValue={productData.mode}
+              onInputChange={(event, newInputValue) => {
+                fetchProductDataLists("mode", newInputValue);
                 setProductData({
                   ...productData,
-                  mode: event.target.value,
+                  mode: newInputValue,
                 });
-                formdata.append("mode", event.target.value);
-                console.log(formdata);
               }}
-              fullWidth
-              label="حالت"
-              variant="outlined"
+              renderInput={(params) => <TextField {...params} label="حالت" />}
             />
-            <TextField
-              value={productData.alloy}
-              onChange={(event) => {
+            <Autocomplete
+              disablePortal
+              freeSolo
+              id="combo-box-demo"
+              options={productDataList.size}
+              inputValue={productData.size}
+              onInputChange={(event, newInputValue) => {
+                fetchProductDataLists("size", newInputValue);
                 setProductData({
                   ...productData,
-                  alloy: event.target.value,
+                  size: newInputValue,
                 });
-                formdata.append("alloy", event.target.value);
               }}
-              fullWidth
-              label="آلیاژ"
-              variant="outlined"
+              renderInput={(params) => <TextField {...params} label="سایز" />}
             />
-            <TextField
-              value={productData.color}
-              onChange={(event) => {
+            <Autocomplete
+              disablePortal
+              freeSolo
+              id="combo-box-demo"
+              options={productDataList.color}
+              inputValue={productData.color}
+              onInputChange={(event, newInputValue) => {
+                fetchProductDataLists("color", newInputValue);
                 setProductData({
                   ...productData,
-                  color: event.target.value,
+                  color: newInputValue,
                 });
               }}
-              fullWidth
-              label="رنگ"
-              variant="outlined"
+              renderInput={(params) => <TextField {...params} label="رنگ" />}
             />
+
+            <Autocomplete
+              disablePortal
+              freeSolo
+              id="combo-box-demo"
+              options={productDataList.standard}
+              inputValue={productData.standard}
+              onInputChange={(event, newInputValue) => {
+                fetchProductDataLists("standard", newInputValue);
+                setProductData({
+                  ...productData,
+                  standard: newInputValue,
+                });
+              }}
+              renderInput={(params) => (
+                <TextField {...params} label="استاندارد" />
+              )}
+            />
+
+            <Autocomplete
+              disablePortal
+              freeSolo
+              id="combo-box-demo"
+              options={productDataList.unit}
+              inputValue={productData.unit}
+              onInputChange={(event, newInputValue) => {
+                fetchProductDataLists("unit", newInputValue);
+                setProductData({
+                  ...productData,
+                  unit: newInputValue,
+                });
+              }}
+              renderInput={(params) => <TextField {...params} label="واحد" />}
+            />
+
             <TextField
               value={productData.delivery}
               onChange={(event) => {
@@ -284,32 +466,6 @@ export default function AdInsert({ editData }) {
               }}
               fullWidth
               label="محل تحویل"
-              variant="outlined"
-            />
-            <TextField
-              value={productData.standard}
-              onChange={(event) => {
-                setProductData({
-                  ...productData,
-                  standard: event.target.value,
-                });
-                formdata.append("standard", event.target.value);
-              }}
-              fullWidth
-              label="استاندارد"
-              variant="outlined"
-            />
-            <TextField
-              value={productData.unit}
-              onChange={(event) => {
-                setProductData({
-                  ...productData,
-                  unit: event.target.value,
-                });
-                formdata.append("unit", event.target.value);
-              }}
-              fullWidth
-              label="واحد"
               variant="outlined"
             />
 
@@ -382,83 +538,98 @@ export default function AdInsert({ editData }) {
                 ))}
               </Select>
             </FormControl>
-            <TextField
-              value={productData.size}
-              onChange={(event) => {
+            <Autocomplete
+              disablePortal
+              freeSolo
+              id="combo-box-demo"
+              options={productDataList.alloy}
+              inputValue={productData.alloy}
+              onInputChange={(event, newInputValue) => {
+                fetchProductDataLists("alloy", newInputValue);
                 setProductData({
                   ...productData,
-                  size: event.target.value,
+                  alloy: newInputValue,
                 });
-                formdata.append("size", event.target.value);
               }}
-              fullWidth
-              label="سایز"
-              variant="outlined"
+              renderInput={(params) => <TextField {...params} label="آلیاژ" />}
             />
-            <TextField
-              value={productData.thickness}
-              onChange={(event) => {
+            <Autocomplete
+              disablePortal
+              freeSolo
+              id="combo-box-demo"
+              options={productDataList.thickness}
+              inputValue={productData.thickness}
+              onInputChange={(event, newInputValue) => {
+                fetchProductDataLists("thickness", newInputValue);
                 setProductData({
                   ...productData,
-                  thickness: event.target.value,
+                  thickness: newInputValue,
                 });
-                form.append("thickness", event.target.value);
               }}
-              fullWidth
-              label="ضخامت"
-              variant="outlined"
+              renderInput={(params) => <TextField {...params} label="ضخامت" />}
             />
-            <TextField
-              value={productData.width}
-              onChange={(event) => {
+            <Autocomplete
+              disablePortal
+              freeSolo
+              id="combo-box-demo"
+              options={productDataList.width}
+              inputValue={productData.width}
+              onInputChange={(event, newInputValue) => {
+                fetchProductDataLists("width", newInputValue);
                 setProductData({
                   ...productData,
-                  width: event.target.value,
+                  width: newInputValue,
                 });
-                formdata.append("width", event.target.value);
               }}
-              fullWidth
-              label="عرض"
-              variant="outlined"
+              renderInput={(params) => <TextField {...params} label="عرض" />}
             />
-            <TextField
-              value={productData.height}
-              onChange={(event) => {
+
+            <Autocomplete
+              disablePortal
+              freeSolo
+              id="combo-box-demo"
+              options={productDataList.height}
+              inputValue={productData.height}
+              onInputChange={(event, newInputValue) => {
+                fetchProductDataLists("height", newInputValue);
                 setProductData({
                   ...productData,
-                  height: event.target.value,
+                  height: newInputValue,
                 });
-                formdata.append("height", event.target.value);
               }}
-              fullWidth
-              label="ارتفاع"
-              variant="outlined"
+              renderInput={(params) => <TextField {...params} label="ارتفاع" />}
             />
-            <TextField
-              value={productData.length}
-              onChange={(event) => {
+
+            <Autocomplete
+              disablePortal
+              freeSolo
+              id="combo-box-demo"
+              options={productDataList.length}
+              inputValue={productData.length}
+              onInputChange={(event, newInputValue) => {
+                fetchProductDataLists("length", newInputValue);
                 setProductData({
                   ...productData,
-                  length: event.target.value,
+                  length: newInputValue,
                 });
-                formdata.append("length", event.target.value);
               }}
-              fullWidth
-              label="طول"
-              variant="outlined"
+              renderInput={(params) => <TextField {...params} label="طول" />}
             />
-            <TextField
-              value={productData.weight}
-              onChange={(event) => {
+
+            <Autocomplete
+              disablePortal
+              freeSolo
+              id="combo-box-demo"
+              options={productDataList.weight}
+              inputValue={productData.weight}
+              onInputChange={(event, newInputValue) => {
+                fetchProductDataLists("weight", newInputValue);
                 setProductData({
                   ...productData,
-                  weight: event.target.value,
+                  weight: newInputValue,
                 });
-                formdata.append("weight", event.target.value);
               }}
-              fullWidth
-              label="وزن"
-              variant="outlined"
+              renderInput={(params) => <TextField {...params} label="وزن" />}
             />
 
             <TextField
@@ -589,7 +760,7 @@ export default function AdInsert({ editData }) {
             variant="contained"
             color="primary"
             size="large"
-            onClick={() => handleAdSubmit(formdata)}
+            onClick={() => handleAdSubmit()}
           >
             {editData ? "ویرایش" : "ثبت"}
           </Button>
