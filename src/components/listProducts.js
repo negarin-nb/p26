@@ -15,7 +15,7 @@ import {
 import { Link } from "react-router-dom";
 import moment from "jalali-moment";
 
-export default function ListProducts({ ads }) {
+export default function ListProducts({ ads, currentPage, postsPerPage }) {
   const [products, setProducts] = useState(ads);
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     backgroundColor: theme.palette.custom.main,
@@ -66,7 +66,9 @@ export default function ListProducts({ ads }) {
         <TableBody>
           {ads.map((product, index) => (
             <StyldedTableRow key={index}>
-              <BodyTableCell>{PN.convertEnToPe(index + 1)}</BodyTableCell>
+              <BodyTableCell>
+                {PN.convertEnToPe((currentPage - 1) * postsPerPage + index + 1)}
+              </BodyTableCell>
               <BodyTableCell
                 sx={{
                   "&:hover": {

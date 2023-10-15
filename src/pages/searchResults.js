@@ -27,41 +27,41 @@ export default function SearchResult() {
   const [subCategories, setSubCategories] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage, setPostsPerPage] = useState(30);
+  const [postsPerPage] = useState(20);
+  const [numOfPages, setNumOfPages] = useState(1);
 
+  //determine category filter
   let state = useLocation().state;
   console.log("state");
   console.log(state);
 
+  // for searching is word and for category filter is number
   const { searchInput } = useParams();
-  //console.log(searchInput);
+  console.log(searchInput);
 
   const fetchSearchResult = async () => {
-    const response = await searchApi.search(searchInput);
-    //console.log(response.data);
-    //setAds(response.data.Item);
+    const response = await searchApi.search(
+      searchInput,
+      currentPage,
+      postsPerPage
+    );
+    setNumOfPages(response.data.Item["number of pages"]);
     setProducts(response.data.ListItems);
+    setAds(response.data.ListItems);
     const _ads = JSON.parse(JSON.stringify(response.data.ListItems));
-    arrangePage(_ads);
   };
   const fetchFilterResult = async (id) => {
-    const response = await searchApi.filter(id);
-    // console.log(response.data.Item);
-    // setAds(response.data.Item);
+    const response = await searchApi.filter(id, currentPage, postsPerPage);
+    setNumOfPages(response.data.Item["number of pages"]);
     setProducts(response.data.ListItems);
+    setAds(response.data.ListItems);
     const _ads = JSON.parse(JSON.stringify(response.data.ListItems));
-    arrangePage(_ads);
   };
 
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const arrangePage = (products) => {
-    const indexOfLastPost = currentPage * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
-    setAds(currentProducts);
+  const handlePageChange = (value) => {
+    setCurrentPage(value);
+    console.log(currentPage);
+    //   fetchFilterResult(searchInput);
   };
 
   const fetchCategories = async () => {
@@ -90,6 +90,7 @@ export default function SearchResult() {
   };
 
   const onClickResult = (id) => {
+    setCurrentPage(1);
     setCategories([]);
     fetchFilterResult(id);
     fetchSubCategories(id);
@@ -106,7 +107,8 @@ export default function SearchResult() {
   }, []);
 
   useEffect(() => {
-    arrangePage(products);
+    if (state) fetchFilterResult(searchInput);
+    else fetchSearchResult();
   }, [currentPage]);
 
   // useEffect(() => {
@@ -153,18 +155,30 @@ export default function SearchResult() {
                 onCategory={handleCategorySelect}
                 onSubCategory={handleSubCategorySelect}
               />
-              <ListProducts ads={ads} />
+              <ListProducts
+                ads={ads}
+                postsPerPage={postsPerPage}
+                currentPage={currentPage}
+              />
             </Stack>
           )}
 
           {
-            <Stack justifyContent="center" py="40px" direction="row" ml="260px">
-              <Pagination
-                postsPerPage={postsPerPage}
-                totalPosts={products.length}
-                currentPage={currentPage}
-                paginate={paginate}
-              />
+            <Stack
+              dir="ltr"
+              justifyContent="center"
+              py="40px"
+              direction="row"
+              ml="260px"
+            >
+              {numOfPages === 1 ? null : (
+                <Pagination
+                  postsPerPage={postsPerPage}
+                  numOfPages={numOfPages}
+                  currentPage={currentPage}
+                  handlePageChange={handlePageChange}
+                />
+              )}
             </Stack>
           }
         </Stack>

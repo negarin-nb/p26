@@ -20,15 +20,28 @@ export function createProduct(formData) {
   return axios.post(`${apiUrl}/products/myproduct/`, formData);
 }
 
-export function getProducts() {
-  return axios.get(`${apiUrl}/products/product/`);
+// export function getProducts() {
+//   return axios.get(`${apiUrl}/products/product/`);
+// }
+
+export function getProducts(pageNum, postsPerPage) {
+  return axios.get(
+    `${apiUrl}/products/product/?page=${pageNum}&page_size=${postsPerPage}`
+  );
 }
 
 export function getProduct(id) {
   return axios.get(`${apiUrl}/products/product/${id}/`);
 }
 
+export function autoComplete(field, content) {
+  return axios.get(
+    `${apiUrl}/products/autocomplete/?field=${field}&content=${content}`
+  );
+}
+
 export default {
+  autoComplete,
   getCategories,
   getSubCategories,
   createProduct,
