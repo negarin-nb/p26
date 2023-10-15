@@ -35,7 +35,7 @@ export default function HomeButton({
           className="Button-title"
           variant="h5"
           component="h2"
-          marginTop={"90px"}
+          marginTop={{ md: "90px", xs: "80px" }}
           sx={{ transition: "0.3s", position: "absolute" }}
         >
           {title}

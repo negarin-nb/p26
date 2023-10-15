@@ -32,7 +32,7 @@ const buttonIcons = [
   },
   {
     svg: () => <Reba viewBox="0 0 34 34" className="svg" sx={svgIconStyle} />,
-    title: "میله‌گرد",
+    title: "میلگرد",
     id: 2,
   },
   {

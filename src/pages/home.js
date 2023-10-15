@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Paper, InputBase, IconButton, Box, Stack } from "@mui/material";
+import { Paper, InputBase, IconButton, Box, Stack, Grid } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Header from "../components/header";
 
@@ -46,9 +46,9 @@ export default function Home() {
             display: "flex",
             alignItems: "center",
             width: {
-              xs: 280,
+              xs: 300,
               sm: 500,
-              // md: 500,
+              md: 630,
               lg: 630,
             },
             my: "50px",
@@ -74,21 +74,26 @@ export default function Home() {
             onKeyDown={(e) => handleSubmitEnter(e)}
           />
         </Paper>
-        <Stack
-          dir="rtl"
-          direction="row"
-          spacing={{ xs: 2, sm: 3.8, lg: 5.5 }}
-          mt={"25px"}
-        >
-          {ButtonIcons.map((buttonIcon) => (
-            <HomeButton
-              key={buttonIcon.id}
-              svgIcon={buttonIcon.svg}
-              title={buttonIcon.title}
-              id={buttonIcon.id}
-              onClickResult={() => {}}
-            />
-          ))}
+        <Stack dir="rtl" direction="row" mt={"25px"}>
+          <Grid
+            dir="rtl"
+            container
+            spacing={{ xs: 2, md: 5 }}
+            columns={{ xs: 12, sm: 8, md: 16 }}
+            mt={"25px"}
+          >
+            {ButtonIcons.map((buttonIcon) => (
+              <Grid item xs={4} sm={2} md={2} marginBottom={6}>
+                <HomeButton
+                  key={buttonIcon.id}
+                  svgIcon={buttonIcon.svg}
+                  title={buttonIcon.title}
+                  id={buttonIcon.id}
+                  onClickResult={() => {}}
+                />
+              </Grid>
+            ))}
+          </Grid>
         </Stack>
       </Stack>
     </Box>
