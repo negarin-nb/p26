@@ -11,15 +11,23 @@ import {
   MenuItem,
   Select,
   Typography,
+  Autocomplete,
+  TextField,
   Pagination,
+  PaginationItem,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import Header from "../components/header";
 import ListProducts from "../components/listProducts";
 import productsApi from "../api/products";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import PN from "persian-number";
 import PaginationCustom from "../components/pagination";
 
 export default function Products() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [ads, setAds] = useState([]);
 
@@ -33,13 +41,140 @@ export default function Products() {
   const [producer, setProducer] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage, setPostsPerPage] = useState(30);
+  const [postsPerPage] = useState(20);
+  const [numOfPages, setNumOfPages] = useState(1);
+
+  const handlePageChange = (value) => {
+    setCurrentPage(value);
+    console.log(currentPage);
+  };
+
+  const [value, setValue] = useState("");
+  const [inputValue, setInputValue] = useState("");
+
+  const [searchInput, setSearchInput] = useState("");
+
+  const handleSubmitButton = () => {
+    navigate(`/results/${searchInput}`);
+  };
+  const handleSubmitEnter = (e) => {
+    if (e.key === "Enter") navigate(`/results/${searchInput}`);
+  };
+
+  const [filteringFields, setFilteringFields] = useState({
+    alloy: ["یک حرف وارد کنید."],
+    producer: ["یک حرف وارد کنید."],
+    supplier: ["یک حرف وارد کنید."],
+    mode: ["یک حرف وارد کنید."],
+    size: ["یک عدد وارد کنید."],
+    color: ["یک حرف وارد کنید."],
+    weight: ["یک عدد وارد کنید."],
+    height: ["یک عدد وارد کنید."],
+    width: ["یک عدد وارد کنید."],
+    length: ["یک عدد وارد کنید."],
+  });
+
+  const [selectedFields, setSelectedFields] = useState({
+    alloy: "",
+    producer: "",
+    supplier: "",
+    mode: "",
+    size: "",
+    color: "",
+    weight: "",
+    height: "",
+    width: "",
+    length: "",
+  });
+  const options = ["The Godfather", "Pulp Fiction"];
+
+  const fetchFilteringFields = async (field, content) => {
+    const response = await productsApi.autoComplete(field, content);
+
+    switch (field) {
+      case "alloy":
+        let _filteringFields = {
+          ...filteringFields,
+          alloy: [...response.data.ListItems],
+        };
+        setFilteringFields(_filteringFields);
+        //console.log(filteringFields);
+        console.log("alloy");
+        break;
+      case "producer":
+        setFilteringFields({
+          ...filteringFields,
+          producer: [...response.data.ListItems],
+        });
+        console.log("producer");
+        break;
+      case "supplier":
+        setFilteringFields({
+          ...filteringFields,
+          supplier: [...response.data.ListItems],
+        });
+        console.log("supplier");
+        break;
+      case "mode":
+        setFilteringFields({
+          ...filteringFields,
+          mode: [...response.data.ListItems],
+        });
+        console.log("mode");
+        break;
+      case "size":
+        setFilteringFields({
+          ...filteringFields,
+          size: [...response.data.ListItems],
+        });
+        console.log("size");
+        break;
+      case "color":
+        setFilteringFields({
+          ...filteringFields,
+          color: [...response.data.ListItems],
+        });
+        console.log("color");
+        break;
+      case "weight":
+        setFilteringFields({
+          ...filteringFields,
+          weight: [...response.data.ListItems],
+        });
+        console.log("weight");
+        break;
+      case "height":
+        setFilteringFields({
+          ...filteringFields,
+          height: [...response.data.ListItems],
+        });
+        console.log("height");
+        break;
+      case "width":
+        setFilteringFields({
+          ...filteringFields,
+          width: [...response.data.ListItems],
+        });
+        console.log("width");
+        break;
+      case "length":
+        setFilteringFields({
+          ...filteringFields,
+          length: [...response.data.ListItems],
+        });
+        console.log("length");
+        break;
+    }
+  };
 
   const fetchProducts = async () => {
-    const response = await productsApi.getProducts();
+    const response = await productsApi.getProducts(currentPage, postsPerPage);
+    //const response = await productsApi.getProducts(currentPage,postsPerPage);
     const _products = JSON.parse(JSON.stringify(response.data.ListItems));
-    arrangePage(_products);
+    // arrangePage(_products);
+    setNumOfPages(response.data.Item["number of pages"]);
     setProducts(response.data.ListItems);
+    setAds(response.data.ListItems);
   };
 
   const fetchCategories = async () => {
@@ -73,20 +208,20 @@ export default function Products() {
     setCurrentPage(pageNumber);
   };
 
-  const arrangePage = (products) => {
-    const indexOfLastPost = currentPage * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
-    setAds(currentProducts);
-  };
+  // const arrangePage = (products) => {
+  //   const indexOfLastPost = currentPage * postsPerPage;
+  //   const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  //   const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
+  //   setAds(currentProducts);
+  // };
 
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(currentPage, postsPerPage);
     fetchCategories();
   }, []);
 
   useEffect(() => {
-    arrangePage(products);
+    fetchProducts(currentPage, postsPerPage);
   }, [currentPage]);
 
   const FormControlStyle = {
@@ -110,9 +245,15 @@ export default function Products() {
             my: "50px",
           }}
         >
-          <IconButton type="button" sx={{ p: "2px" }} aria-label="search">
+          <IconButton
+            type="button"
+            sx={{ p: "2px" }}
+            aria-label="search"
+            onClick={handleSubmitButton}
+          >
             <SearchIcon sx={{ fontSize: { xs: 20, md: 25, lg: 30 } }} />
           </IconButton>
+
           <InputBase
             inputProps={{
               "aria-label": "search",
@@ -120,6 +261,9 @@ export default function Products() {
             }}
             sx={{ mx: 1, flex: 1 }}
             placeholder="جستجو"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => handleSubmitEnter(e)}
           />
         </Paper>
       </Stack>
@@ -139,6 +283,7 @@ export default function Products() {
               sx={{
                 backgroundColor: "#fff",
                 paddingTop: "10px",
+                paddingBottom: "5px",
                 paddingX: "10px",
                 borderRadius: "5px",
               }}
@@ -205,61 +350,244 @@ export default function Products() {
                 </Select>
               </FormControl>
 
-              <FormControl fullWidth sx={FormControlStyle}>
-                <InputLabel sx={{ color: "text.main" }} id="select-label3">
-                  عرضه‌کننده
-                </InputLabel>
-                <Select
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                sx={FormControlStyle}
+                options={filteringFields.producer}
+                noOptionsText={"موردی یافت نشد"}
+                inputValue={selectedFields.producer}
+                onInputChange={(event, newInputValue) => {
+                  //  console.log(newInputValue);
+                  // setInputValue(newInputValue);
+                  fetchFilteringFields("producer", newInputValue);
+                  setSelectedFields({
+                    ...selectedFields,
+                    producer: newInputValue,
+                  });
+                  console.log(selectedFields);
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} label="تولیدکننده" />
+                )}
+              />
+
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                sx={FormControlStyle}
+                options={filteringFields.supplier}
+                noOptionsText={"موردی یافت نشد"}
+                inputValue={selectedFields.supplier}
+                onInputChange={(event, newInputValue) => {
+                  //  console.log(newInputValue);
+                  // setInputValue(newInputValue);
+                  fetchFilteringFields("supplier", newInputValue);
+                  setSelectedFields({
+                    ...selectedFields,
+                    supplier: newInputValue,
+                  });
+                  console.log(selectedFields);
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} label="عرضه‌کننده" />
+                )}
+              />
+
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                sx={FormControlStyle}
+                options={filteringFields.alloy}
+                value={selectedFields.alloy}
+                noOptionsText={"موردی یافت نشد"}
+                // onChange={(event, newValue) => {
+                //   fetchFilteringFields("alloy", newValue);
+                //   setSelectedFields({
+                //     ...selectedFields,
+                //     alloy: newValue,
+                //   });
+                // }}
+                inputValue={selectedFields.alloy}
+                onInputChange={(event, newInputValue) => {
+                  //  console.log(newInputValue);
+                  // setInputValue(newInputValue);
+                  fetchFilteringFields("alloy", newInputValue);
+                  setSelectedFields({
+                    ...selectedFields,
+                    alloy: newInputValue,
+                  });
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} label="آلیاژ" />
+                )}
+              />
+
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                sx={FormControlStyle}
+                options={filteringFields.mode}
+                noOptionsText={"موردی یافت نشد"}
+                inputValue={selectedFields.mode}
+                onInputChange={(event, newInputValue) => {
+                  //  console.log(newInputValue);
+                  // setInputValue(newInputValue);
+                  fetchFilteringFields("mode", newInputValue);
+                  setSelectedFields({
+                    ...selectedFields,
+                    mode: newInputValue,
+                  });
+                  console.log(selectedFields);
+                }}
+                renderInput={(params) => <TextField {...params} label="حالت" />}
+              />
+
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                sx={FormControlStyle}
+                options={filteringFields.weight}
+                noOptionsText={"موردی یافت نشد"}
+                inputValue={selectedFields.weight}
+                onInputChange={(event, newInputValue) => {
+                  //  console.log(newInputValue);
+                  // setInputValue(newInputValue);
+                  fetchFilteringFields("weight", newInputValue);
+                  setSelectedFields({
+                    ...selectedFields,
+                    weight: newInputValue,
+                  });
+                  console.log(selectedFields);
+                }}
+                renderInput={(params) => <TextField {...params} label="وزن" />}
+              />
+
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                sx={FormControlStyle}
+                options={filteringFields.height}
+                noOptionsText={"موردی یافت نشد"}
+                inputValue={selectedFields.height}
+                onInputChange={(event, newInputValue) => {
+                  //  console.log(newInputValue);
+                  // setInputValue(newInputValue);
+                  fetchFilteringFields("height", newInputValue);
+                  setSelectedFields({
+                    ...selectedFields,
+                    height: newInputValue,
+                  });
+                  console.log(selectedFields);
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} label="ارتفاع" />
+                )}
+              />
+
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                sx={FormControlStyle}
+                options={filteringFields.length}
+                noOptionsText={"موردی یافت نشد"}
+                inputValue={selectedFields.length}
+                onInputChange={(event, newInputValue) => {
+                  //  console.log(newInputValue);
+                  // setInputValue(newInputValue);
+                  fetchFilteringFields("length", newInputValue);
+                  setSelectedFields({
+                    ...selectedFields,
+                    length: newInputValue,
+                  });
+                  console.log(selectedFields);
+                }}
+                renderInput={(params) => <TextField {...params} label="طول" />}
+              />
+
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                sx={FormControlStyle}
+                options={filteringFields.width}
+                noOptionsText={"موردی یافت نشد"}
+                inputValue={selectedFields.width}
+                onInputChange={(event, newInputValue) => {
+                  //  console.log(newInputValue);
+                  // setInputValue(newInputValue);
+                  fetchFilteringFields("width", newInputValue);
+                  setSelectedFields({
+                    ...selectedFields,
+                    width: newInputValue,
+                  });
+                  console.log(selectedFields);
+                }}
+                renderInput={(params) => <TextField {...params} label="عرض" />}
+              />
+
+              {/* <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={supplier}
-                  label="عرضه‌کننده"
-                  onChange={(event) => setSupplier(event.target.value)}
+                  value={selectedFields.alloy}
+                  label="آلیاژ"
+                  onChange={(event) =>
+                    setSelectedFields({
+                      ...selectedFields,
+                      alloy: event.target.value,
+                    })
+                  }
                 >
-                  <MenuItem dir="rtl" value={18}>
-                    ۱۸
-                  </MenuItem>
-                  <MenuItem dir="rtl" value={20}>
-                    ۲۰
-                  </MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl fullWidth sx={FormControlStyle}>
-                <InputLabel sx={{ color: "text.main" }} id="select-label3">
-                  تولیدکننده
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={producer}
-                  label="تولیدکننده"
-                  onChange={(event) => setProducer(event.target.value)}
-                >
-                  <MenuItem dir="rtl" value={18}>
-                    ۱۸
-                  </MenuItem>
-                  <MenuItem dir="rtl" value={20}>
-                    ۲۰
-                  </MenuItem>
-                </Select>
-              </FormControl>
+                  <TextField
+                    inputProps={{
+                      "aria-label": "search",
+                      style: { textAlign: "right" },
+                    }}
+                    sx={{ mx: 1, flex: 1 }}
+                    placeholder="جستجو"
+                    // value={searchInput}
+                    onChange={(e) => {
+                      fetchFilteringFields("alloy", e.target.value);
+                    }}
+                    //  onKeyDown={(e) => handleSubmitEnter(e)}
+                  />
+                </Select> */}
             </Box>
           </Box>
         </div>
 
-        <ListProducts ads={ads} />
+        <ListProducts
+          ads={ads}
+          postsPerPage={postsPerPage}
+          currentPage={currentPage}
+        />
       </Stack>
 
       {
-        <Stack justifyContent="center" py="40px" direction="row" ml="260px">
-          <PaginationCustom
-            postsPerPage={postsPerPage}
-            totalPosts={products.length}
-            currentPage={currentPage}
-            paginate={paginate}
-          />
-        </Stack>
+        // <Stack justifyContent="center" py="40px" direction="row" ml="260px">
+        //   <Pagination
+        //     dir="rtl"
+        //     sx={{ color: "blue" }}
+        //     count={10}
+        //     page={currentPage}
+        //     onChange={handlePageChange}
+        //     renderItem={(item) => (
+        //       <PaginationItem
+        //         slots={{ next: ArrowBackIcon, previous: ArrowForwardIcon }}
+        //         page={PN.convertEnToPe(item.page)}
+        //         {...item}
+        //       />
+        //     )}
+        //   />
+        // </Stack>
       }
+      <Stack justifyContent="center" py="40px" direction="row" ml="260px">
+        <PaginationCustom
+          postsPerPage={postsPerPage}
+          numOfPages={numOfPages}
+          currentPage={currentPage}
+          handlePageChange={handlePageChange}
+        />
+      </Stack>
       {/* <TabContext value={value}>
         <TabList
           dir="rtl"
