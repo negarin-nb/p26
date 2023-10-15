@@ -7,7 +7,7 @@ import {
   Stack,
   Snackbar,
   Alert,
-  Link,
+  //Link,
 } from "@mui/material";
 import Header from "../components/header";
 import OutlinedInput from "@mui/material/OutlinedInput";
@@ -17,9 +17,10 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contex/authContext";
 import authApi from "../api/auth";
+import PN from "persian-number";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -52,7 +53,10 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await authApi.login(userData);
+      const response = await authApi.login({
+        ...userData,
+        username: PN.convertPeToEn(userData.username),
+      });
       if (response.data.access) {
         //openAlert("success", "عضویت با موفقیت انجام شد.");
         authCtx.setUserToken(response.data.access);
@@ -66,6 +70,10 @@ export default function Login() {
       openAlert("error", "نام کاربری یا رمز عبور اشتباه است.");
       console.log(e);
     }
+  };
+
+  const handleSubmitEnter = (e) => {
+    if (e.key === "Enter") handleLogin();
   };
 
   const paperStyle = {
@@ -112,12 +120,17 @@ export default function Login() {
           </Typography>
           <form>
             <TextField
+              autoFocus
               sx={inputStyle}
               fullWidth
-              label="نام کاربری"
+              label="شماره موبایل"
               variant="outlined"
+              value={userData.username}
               onChange={(e) => {
-                setUserData({ ...userData, username: e.target.value });
+                setUserData({
+                  ...userData,
+                  username: PN.convertEnToPe(e.target.value),
+                });
               }}
             />
 
@@ -133,6 +146,7 @@ export default function Login() {
               <OutlinedInput
                 id="outlined-adornment-password"
                 type={showPassword ? "text" : "password"}
+                onKeyDown={(e) => handleSubmitEnter(e)}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -151,7 +165,18 @@ export default function Login() {
           </form>
           <Typography>
             ثبت نام نکرده‌اید؟
-            <Link href="/register">ثبت‌نام</Link>
+            <Typography variant="body2" component={Link} to="/register">
+              ثبت‌نام
+            </Typography>
+          </Typography>
+          <Typography
+            variant="body2"
+            to="/register"
+            state={true}
+            component={Link}
+            sx={{ mt: "-50px" }}
+          >
+            فراموشی رمز عبور
           </Typography>
           <Button
             type="submit"
