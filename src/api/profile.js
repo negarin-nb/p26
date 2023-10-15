@@ -34,9 +34,14 @@ export function deleteMyProduct(id) {
   return axios.delete(`${apiUrl}/products/myproduct/${id}/`);
 }
 
+export function editMyProduct(formData) {
+  return axios.put(`${apiUrl}/products/myproduct/`, formData);
+}
+
 export default {
   getProfile,
   editProfile,
   getMyProducts,
   deleteMyProduct,
+  editMyProduct,
 };
