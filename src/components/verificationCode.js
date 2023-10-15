@@ -1,21 +1,17 @@
 import React from "react";
-import {
-  TextField,
-  Button,
-  Paper,
-  Typography,
-  Stack,
-  Snackbar,
-  Alert,
-} from "@mui/material";
+import { Button, Paper, Typography, Stack } from "@mui/material";
 import { MuiOtpInput } from "mui-one-time-password-input";
-import authApi from "../api/auth";
+import PN from "persian-number";
 
 export default function VerificationCode({
+  resetPassword,
   otp,
   setOtp,
   handleVerificationCode,
 }) {
+  const handleSubmitEnter = (e) => {
+    if (e.key === "Enter") handleVerificationCode();
+  };
   const paperStyle = {
     padding: "45px",
     width: "28%",
@@ -44,18 +40,20 @@ export default function VerificationCode({
     >
       <Paper sx={paperStyle} elevation={7}>
         <Typography sx={{ color: "#000" }} variant="h1">
-          عضویت
+          {resetPassword ? "فراموشی رمز عبور" : "عضویت"}
         </Typography>
         <Typography sx={{ color: "#000", direction: "ltr" }} variant="body1">
           کد تاییدارسال شده را وارد نمایید.
         </Typography>
         <form>
           <MuiOtpInput
+            autoFocus
             length={5}
             value={otp}
             onChange={(newValue) => {
-              setOtp(newValue);
+              setOtp(PN.convertEnToPe(newValue));
             }}
+            onKeyDown={(e) => handleSubmitEnter(e)}
           />
         </form>
         <Button

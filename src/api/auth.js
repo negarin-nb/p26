@@ -10,14 +10,14 @@ export function sendPhone(phone) {
   });
 }
 
-export function sendVerificationCode({ phone, otp }) {
+export function sendVerificationCode(phone, otp) {
   return axios.post("http://api.p26.ir/users/CheckVerificationCode/", {
     phone_number: phone,
     verification_code: otp,
   });
 }
 
-export function register({ phone, otp, register }) {
+export function register(phone, otp, register) {
   return axios.post("http://api.p26.ir/users/register/", {
     phone_number: phone,
     verification_code: otp,
@@ -25,6 +25,14 @@ export function register({ phone, otp, register }) {
     first_name: register.userName,
     last_name: "",
     shop_name: "",
+  });
+}
+
+export function resetPassword(phone, otp, register) {
+  return axios.post("http://api.p26.ir/users/ForgotPassword/", {
+    phone_number: phone,
+    verification_code: otp,
+    password: register.password,
   });
 }
 
@@ -40,6 +48,7 @@ export function getJwt() {
 }
 
 export default {
+  resetPassword,
   login,
   sendPhone,
   sendVerificationCode,

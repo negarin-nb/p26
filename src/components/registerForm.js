@@ -9,6 +9,7 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 
 export default function RegisterForm({
+  resetPassword,
   register,
   setRegister,
   handleRegister,
@@ -19,6 +20,10 @@ export default function RegisterForm({
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
+  };
+
+  const handleSubmitEnter = (e) => {
+    if (e.key === "Enter") handleRegister();
   };
 
   const paperStyle = {
@@ -50,28 +55,34 @@ export default function RegisterForm({
     >
       <Paper sx={paperStyle} elevation={7}>
         <Typography sx={{ color: "#000" }} variant="h1">
-          عضویت
+          {resetPassword ? "فراموشی رمز عبور" : "عضویت"}
         </Typography>
         <Typography sx={{ color: "#000" }} variant="body1">
-          مشخصات حساب کاربری خود را وارد نمایید.
+          {resetPassword
+            ? "رمز عبور جدید خود را وارد نمایید"
+            : "مشخصات حساب کاربری خود را وارد نمایید."}
         </Typography>
         <form>
-          <TextField
-            onChange={(e) => {
-              setRegister({ ...register, userName: e.target.value });
-            }}
-            fullWidth
-            label="نام کاربری"
-            variant="outlined"
-          />
-          <TextField
-            onChange={(e) => {
-              setRegister({ ...register, email: e.target.value });
-            }}
-            fullWidth
-            label="ایمیل"
-            variant="outlined"
-          />
+          {!resetPassword && (
+            <TextField
+              onChange={(e) => {
+                setRegister({ ...register, userName: e.target.value });
+              }}
+              fullWidth
+              label="نام کاربری"
+              variant="outlined"
+            />
+          )}
+          {!resetPassword && (
+            <TextField
+              onChange={(e) => {
+                setRegister({ ...register, email: e.target.value });
+              }}
+              fullWidth
+              label="ایمیل"
+              variant="outlined"
+            />
+          )}
 
           <FormControl
             fullWidth
@@ -80,10 +91,11 @@ export default function RegisterForm({
             }}
           >
             <InputLabel htmlFor="outlined-adornment-password">
-              رمز عبور
+              {resetPassword ? "رمز عبور جدید" : "رمز عبور"}
             </InputLabel>
             <OutlinedInput
               id="outlined-adornment-password"
+              onKeyDown={(e) => handleSubmitEnter(e)}
               type={showPassword ? "text" : "password"}
               endAdornment={
                 <InputAdornment position="end">
@@ -97,7 +109,7 @@ export default function RegisterForm({
                   </IconButton>
                 </InputAdornment>
               }
-              label="رمز عبور"
+              label={resetPassword ? "رمز عبور جدید" : "رمز عبور"}
             />
           </FormControl>
         </form>

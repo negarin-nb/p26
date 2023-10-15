@@ -1,24 +1,23 @@
 import React, { useState } from "react";
-import {
-  TextField,
-  Button,
-  Paper,
-  Typography,
-  Stack,
-  Snackbar,
-  Alert,
-} from "@mui/material";
+import { Snackbar, Alert } from "@mui/material";
 import Header from "../components/header";
-import { Link, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import RegisterForm from "../components/registerForm";
 import VerificationCode from "../components/verificationCode";
 import PhoneNumberForm from "../components/phoneNumberForm";
 import authApi from "../api/auth";
 import { useAuth } from "../contex/authContext";
+import PN from "persian-number";
 
 export default function Register() {
+  //let state = useLocation().state;
+
   const navigate = useNavigate();
   const authCtx = useAuth();
+
+  const [resetPassword] = useState(useLocation().state);
+  console.log("state");
+  console.log(resetPassword);
   const [handler, setHandler] = useState({
     phone: true,
     code: false,
@@ -48,7 +47,7 @@ export default function Register() {
 
   const handlePhoneNumber = async () => {
     try {
-      const response = await authApi.sendPhone(phone);
+      const response = await authApi.sendPhone(PN.convertPeToEn(phone));
       if (response.data.IsSuccess) {
         setHandler({ phone: false, code: true, register: false });
         openAlert("success", "کد تایید ارسال شد");
@@ -59,7 +58,10 @@ export default function Register() {
   };
   const handleVerificationCode = async () => {
     try {
-      const response = await authApi.sendPhone(phone);
+      const response = await authApi.sendVerificationCode(
+        PN.convertPeToEn(phone),
+        PN.convertPeToEn(otp)
+      );
       if (response.data.IsSuccess) {
         setHandler({ phone: false, code: false, register: true });
         openAlert("success", "کد تایید معتبر است");
@@ -71,21 +73,45 @@ export default function Register() {
 
   const handleRegister = async () => {
     try {
-      const response = await authApi.register({ phone, otp, register });
-      if (response.data.IsSuccess) {
-        setHandler({ phone: false, code: false, register: true });
-        openAlert("success", "عضویت با موفقیت انجام شد.");
-        authCtx.setUserToken(response.data.Item.access);
-
-        localStorage.setItem(
-          "token",
-          JSON.stringify(response.data.Item.access)
+      if (resetPassword) {
+        const response = await authApi.resetPassword(
+          PN.convertPeToEn(phone),
+          PN.convertPeToEn(otp),
+          register
         );
+        if (response.data.IsSuccess) {
+          setHandler({ phone: false, code: false, register: true });
+          openAlert("success", "تغییر رمز با موفقیت انجام شد.");
+          // authCtx.setUserToken(response.data.Item.access);
+          // localStorage.setItem(
+          //   "token",
+          //   JSON.stringify(response.data.Item.access)
+          // );
+        } else {
+          setMessage(response.data.Message);
+          console.log(response.data.Message);
+        }
+        navigate("/login");
       } else {
-        setMessage(response.data.Message);
-        console.log(response.data.Message);
+        const response = await authApi.register(
+          PN.convertPeToEn(phone),
+          PN.convertPeToEn(otp),
+          register
+        );
+        if (response.data.IsSuccess) {
+          setHandler({ phone: false, code: false, register: true });
+          openAlert("success", "عضویت با موفقیت انجام شد.");
+          authCtx.setUserToken(response.data.Item.access);
+          localStorage.setItem(
+            "token",
+            JSON.stringify(response.data.Item.access)
+          );
+        } else {
+          setMessage(response.data.Message);
+          console.log(response.data.Message);
+        }
+        navigate("/");
       }
-      navigate("/");
     } catch (e) {
       openAlert("error", message);
     }
@@ -95,6 +121,7 @@ export default function Register() {
       <Header />
       {handler.phone && (
         <PhoneNumberForm
+          resetPassword={resetPassword}
           phone={phone}
           setPhone={setPhone}
           handlePhoneNumber={handlePhoneNumber}
@@ -102,6 +129,7 @@ export default function Register() {
       )}
       {handler.code && (
         <VerificationCode
+          resetPassword={resetPassword}
           phone={phone}
           otp={otp}
           setOtp={setOtp}
@@ -110,6 +138,7 @@ export default function Register() {
       )}
       {handler.register && (
         <RegisterForm
+          resetPassword={resetPassword}
           phone={phone}
           otp={otp}
           register={register}
