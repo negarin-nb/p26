@@ -30,7 +30,7 @@ const theme = createTheme({
     body2: {
       fontWeight: 400,
       fontSize: "13px",
-      color: "#808080",
+      color: "#0000FF",
     },
     h1: {
       fontWeight: 700,
