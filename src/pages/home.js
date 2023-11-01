@@ -4,7 +4,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import Header from "../components/header";
 
 import HomeButton from "../components/homeButton";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import ButtonIcons from "../assets/buttonIcons/ButtonIcons";
 import { LineChart } from "@mui/x-charts/LineChart";
 
@@ -46,7 +46,7 @@ export default function Home() {
             display: "flex",
             alignItems: "center",
             width: {
-              xs: 300,
+              xs: "100%",
               sm: 500,
               md: 630,
               lg: 630,

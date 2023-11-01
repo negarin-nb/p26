@@ -14,7 +14,7 @@ export default function VerificationCode({
   };
   const paperStyle = {
     padding: "45px",
-    width: "28%",
+    width: { xs: "70%", sm: "50%", md: "30%" },
     height: "300px",
     display: "flex",
     flexDirection: "column",

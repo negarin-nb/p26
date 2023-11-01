@@ -53,8 +53,12 @@ export default function ListProducts({ ads, currentPage, postsPerPage }) {
           <TableRow>
             <StyledTableCell style={{ width: "5%" }}>ردیف</StyledTableCell>
             <StyledTableCell>عنوان</StyledTableCell>
-            <StyledTableCell>تولیدکننده</StyledTableCell>
-            <StyledTableCell>عرضه‌کننده</StyledTableCell>
+            <StyledTableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
+              تولیدکننده
+            </StyledTableCell>
+            <StyledTableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
+              عرضه‌کننده
+            </StyledTableCell>
             {/* <StyledTableCell>طول</StyledTableCell>
               <StyledTableCell>سایز</StyledTableCell>
               <StyledTableCell>نوع</StyledTableCell> */}
@@ -78,8 +82,12 @@ export default function ListProducts({ ads, currentPage, postsPerPage }) {
               >
                 {product.title}
               </BodyTableCell>
-              <BodyTableCell>{product.producer}</BodyTableCell>
-              <BodyTableCell>{product.supplier}</BodyTableCell>
+              <BodyTableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
+                {product.producer}
+              </BodyTableCell>
+              <BodyTableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
+                {product.supplier}
+              </BodyTableCell>
               <BodyTableCell>{PN.convertEnToPe(product.price)}</BodyTableCell>
               <BodyTableCell>
                 {PN.convertEnToPe(
