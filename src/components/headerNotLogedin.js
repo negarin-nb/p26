@@ -140,6 +140,7 @@ export default function HeaderNotLogedin() {
         component={Link}
         direction="row"
         sx={{
+          //width: { xs: "50%", md: "100%" },
           flex: 1,
           justifyContent: "flex-end",
           display: { xs: "none", md: "flex" },
@@ -155,18 +156,23 @@ export default function HeaderNotLogedin() {
       <Stack
         direction="row"
         sx={{
-          flex: 1,
+          //  flex: 1,
           justifyContent: "flex-end",
+          alignItems: "center",
           display: { xs: "flex", md: "none" },
         }}
       >
+        <img
+          style={{ width: "90px", height: "37px" }}
+          src={require("../assets/images/Logo601.png")}
+        />
         <IconButton
           size="large"
           edge="start"
           color="primary"
           aria-label="open-drawer"
           onClick={handleDrawerToggle}
-          sx={{ mr: 2 }}
+          sx={{ mr: "2px" }}
         >
           <MenuIcon />
         </IconButton>

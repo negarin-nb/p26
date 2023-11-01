@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Stack, Toolbar, Typography } from "@mui/material";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contex/authContext";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -42,6 +42,8 @@ export default function HeaderLogedin() {
     setMobileOpen(!mobileOpen);
   };
 
+  let { pathname } = useLocation();
+
   const drawerWidth = 240;
   const menuItems = [
     { text: "خانه", link: "/" },
@@ -54,7 +56,6 @@ export default function HeaderLogedin() {
   const drawer = (
     <div>
       <Toolbar />
-
       <List>
         {menuItems.map((menuItem, index) => (
           <ListItem key={menuItem.text} disablePadding>
@@ -72,8 +73,7 @@ export default function HeaderLogedin() {
       </List>
     </div>
   );
-  //const theme = useTheme();
-  //const isMobile = useMediaQuery(theme.breakPoints.down("xs"))
+
   return (
     <Stack direction="row" sx={{ pt: "20px" }}>
       <Stack direction="row" sx={{ flex: 1, my: "10px" }}>
@@ -105,9 +105,9 @@ export default function HeaderLogedin() {
         direction="row"
         dir="rtl"
         spacing={{ xs: "0px", sm: "10px", md: "30px", lg: "40px" }}
+        justifyContent={pathname === "/" ? "flex-start" : "center"}
         sx={{
           flex: 2,
-          justifyContent: "center",
           alignItems: "center",
           display: { xs: "none", md: "flex" },
         }}
@@ -155,21 +155,23 @@ export default function HeaderLogedin() {
       </Stack>
 
       {/* desktop */}
-      <Stack
-        to={"/"}
-        component={Link}
-        direction="row"
-        sx={{
-          flex: 1,
-          justifyContent: "flex-end",
-          display: { xs: "none", md: "flex" },
-        }}
-      >
-        <img
-          style={{ width: "100%", maxWidth: "120px" }}
-          src={require("../assets/images/Logo601.png")}
-        />
-      </Stack>
+      {pathname === "/" ? null : (
+        <Stack
+          to={"/"}
+          component={Link}
+          direction="row"
+          sx={{
+            flex: 1,
+            justifyContent: "flex-end",
+            display: { xs: "none", md: "flex" },
+          }}
+        >
+          <img
+            style={{ width: "100%", maxWidth: "120px" }}
+            src={require("../assets/images/Logo601.png")}
+          />
+        </Stack>
+      )}
 
       {/* mobile */}
       <Stack
@@ -177,16 +179,25 @@ export default function HeaderLogedin() {
         sx={{
           flex: 1,
           justifyContent: "flex-end",
+          alignItems: "center",
           display: { xs: "flex", md: "none" },
         }}
       >
+        {pathname === "/" ? null : (
+          <Link to={"/"}>
+            <img
+              style={{ width: "90px", height: "37px" }}
+              src={require("../assets/images/Logo601.png")}
+            />
+          </Link>
+        )}
         <IconButton
           size="large"
           edge="start"
           color="primary"
           aria-label="open-drawer"
           onClick={handleDrawerToggle}
-          sx={{ mr: 2 }}
+          sx={{ mr: "2px" }}
         >
           <MenuIcon />
         </IconButton>
