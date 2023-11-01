@@ -6,39 +6,33 @@ import {
   Stack,
   Divider,
   Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
+  Button,
+  Drawer,
   Typography,
-  Autocomplete,
-  TextField,
-  Pagination,
-  PaginationItem,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import Header from "../components/header";
 import ListProducts from "../components/listProducts";
 import productsApi from "../api/products";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PN from "persian-number";
 import PaginationCustom from "../components/pagination";
+import ProductsFilters from "../components/productsFilters";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import CloseIcon from "@mui/icons-material/Close";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import searchApi from "../api/search";
 
 export default function Products() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [ads, setAds] = useState([]);
 
-  const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState("");
-
-  const [subCategories, setSubCategories] = useState([]);
-  const [subCategory, setSubCategory] = useState("");
-
-  const [supplier, setSupplier] = useState("");
-  const [producer, setProducer] = useState("");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(20);
@@ -61,20 +55,9 @@ export default function Products() {
     if (e.key === "Enter") navigate(`/results/${searchInput}`);
   };
 
-  const [filteringFields, setFilteringFields] = useState({
-    alloy: ["یک حرف وارد کنید."],
-    producer: ["یک حرف وارد کنید."],
-    supplier: ["یک حرف وارد کنید."],
-    mode: ["یک حرف وارد کنید."],
-    size: ["یک عدد وارد کنید."],
-    color: ["یک حرف وارد کنید."],
-    weight: ["یک عدد وارد کنید."],
-    height: ["یک عدد وارد کنید."],
-    width: ["یک عدد وارد کنید."],
-    length: ["یک عدد وارد کنید."],
-  });
-
   const [selectedFields, setSelectedFields] = useState({
+    category_id: "",
+    subCategory_id: "",
     alloy: "",
     producer: "",
     supplier: "",
@@ -86,86 +69,6 @@ export default function Products() {
     width: "",
     length: "",
   });
-  const options = ["The Godfather", "Pulp Fiction"];
-
-  const fetchFilteringFields = async (field, content) => {
-    const response = await productsApi.autoComplete(field, content);
-
-    switch (field) {
-      case "alloy":
-        let _filteringFields = {
-          ...filteringFields,
-          alloy: [...response.data.ListItems],
-        };
-        setFilteringFields(_filteringFields);
-        //console.log(filteringFields);
-        console.log("alloy");
-        break;
-      case "producer":
-        setFilteringFields({
-          ...filteringFields,
-          producer: [...response.data.ListItems],
-        });
-        console.log("producer");
-        break;
-      case "supplier":
-        setFilteringFields({
-          ...filteringFields,
-          supplier: [...response.data.ListItems],
-        });
-        console.log("supplier");
-        break;
-      case "mode":
-        setFilteringFields({
-          ...filteringFields,
-          mode: [...response.data.ListItems],
-        });
-        console.log("mode");
-        break;
-      case "size":
-        setFilteringFields({
-          ...filteringFields,
-          size: [...response.data.ListItems],
-        });
-        console.log("size");
-        break;
-      case "color":
-        setFilteringFields({
-          ...filteringFields,
-          color: [...response.data.ListItems],
-        });
-        console.log("color");
-        break;
-      case "weight":
-        setFilteringFields({
-          ...filteringFields,
-          weight: [...response.data.ListItems],
-        });
-        console.log("weight");
-        break;
-      case "height":
-        setFilteringFields({
-          ...filteringFields,
-          height: [...response.data.ListItems],
-        });
-        console.log("height");
-        break;
-      case "width":
-        setFilteringFields({
-          ...filteringFields,
-          width: [...response.data.ListItems],
-        });
-        console.log("width");
-        break;
-      case "length":
-        setFilteringFields({
-          ...filteringFields,
-          length: [...response.data.ListItems],
-        });
-        console.log("length");
-        break;
-    }
-  };
 
   const fetchProducts = async () => {
     const response = await productsApi.getProducts(currentPage, postsPerPage);
@@ -177,18 +80,25 @@ export default function Products() {
     setAds(response.data.ListItems);
   };
 
-  const fetchCategories = async () => {
-    const response = await productsApi.getCategories();
-    setCategories(response.data.ListItems);
+  const fetchFilterResult = async (id) => {
+    //id is category_id
+    const response = await searchApi.filter(id, currentPage, postsPerPage, {
+      ...selectedFields,
+      category_id: id,
+    }); // we need to fetch products by category id as soon as the component is mounted, so we shoud set and pass category_id like this
+    console.log(response);
+    setNumOfPages(response.data.Item["number of pages"]);
+    setProducts(response.data.ListItems);
+    setAds(response.data.ListItems);
   };
 
   const fetchSubCategories = async (id) => {
     const response = await productsApi.getSubCategories(id);
-    setSubCategories(response.data.ListItems);
+    //setSubCategories(response.data.ListItems);
   };
 
   const handleCategorySelect = async (id) => {
-    setSubCategories([]);
+    //setSubCategories([]);
     const _products = [...products];
     const _ads = _products.filter((product) => product.category === id);
     setAds(_ads);
@@ -204,31 +114,22 @@ export default function Products() {
     );
     setAds(_ads);
   };
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  // const arrangePage = (products) => {
-  //   const indexOfLastPost = currentPage * postsPerPage;
-  //   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  //   const currentProducts = products.slice(indexOfFirstPost, indexOfLastPost);
-  //   setAds(currentProducts);
-  // };
 
   useEffect(() => {
     fetchProducts(currentPage, postsPerPage);
-    fetchCategories();
+    //fetchCategories();
   }, []);
 
   useEffect(() => {
-    fetchProducts(currentPage, postsPerPage);
+    //fetchProducts(currentPage, postsPerPage);
+    fetchFilterResult(selectedFields.category_id);
   }, [currentPage]);
 
-  const FormControlStyle = {
-    backgroundColor: "custom.main",
-    borderRadius: "5px",
-    marginBottom: "8px",
-  };
+  useEffect(() => {
+    console.log("products->useEffect with selectedField dependency");
+    fetchFilterResult(selectedFields.category_id);
+    setCurrentPage(1);
+  }, [selectedFields]);
 
   return (
     <div className="App">
@@ -241,8 +142,8 @@ export default function Products() {
             p: "5px",
             display: "flex",
             alignItems: "center",
-            width: { xs: 300, sm: 450, md: 500, lg: 630 },
-            my: "50px",
+            width: { xs: "100%", sm: 450, md: 500, lg: 630 },
+            my: { xs: "30px", md: "50px" },
           }}
         >
           <IconButton
@@ -267,11 +168,48 @@ export default function Products() {
           />
         </Paper>
       </Stack>
-      <Divider sx={{ marginBottom: "30px" }} />
+      <Divider sx={{ marginBottom: "20px" }} />
+      <Stack
+        display={{ xs: "flex", md: "none" }}
+        dir="rtl"
+        direction="row"
+        alignItems="center"
+        spacing={1}
+        sx={{ marginBottom: "10px" }}
+      >
+        <Button
+          onClick={handleDrawerToggle}
+          color="text"
+          fontSize="12px"
+          startIcon={<FilterListIcon />}
+        >
+          فیلتر
+        </Button>
+      </Stack>
 
       <Stack dir="rtl" direction="row">
-        <div style={{ width: "30%" }}>
-          <Box
+        <Stack width="30%" direction="row" display={{ xs: "none", md: "flex" }}>
+          <ProductsFilters
+            categoryPage={{ is: false, catId: null }}
+            selectedFields={selectedFields}
+            setSelectedFields={setSelectedFields}
+          />
+        </Stack>
+
+        {ads.length === 0 ? (
+          <Stack width="100%">
+            <Typography dir="rtl" variant="h3">
+              محصولی یافت نشد!
+            </Typography>
+          </Stack>
+        ) : (
+          <ListProducts
+            ads={ads}
+            postsPerPage={postsPerPage}
+            currentPage={currentPage}
+          />
+        )}
+        {/* <Box
             sx={{
               mr: "30px",
               backgroundColor: "custom.main",
@@ -524,42 +462,8 @@ export default function Products() {
                 }}
                 renderInput={(params) => <TextField {...params} label="عرض" />}
               />
-
-              {/* <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={selectedFields.alloy}
-                  label="آلیاژ"
-                  onChange={(event) =>
-                    setSelectedFields({
-                      ...selectedFields,
-                      alloy: event.target.value,
-                    })
-                  }
-                >
-                  <TextField
-                    inputProps={{
-                      "aria-label": "search",
-                      style: { textAlign: "right" },
-                    }}
-                    sx={{ mx: 1, flex: 1 }}
-                    placeholder="جستجو"
-                    // value={searchInput}
-                    onChange={(e) => {
-                      fetchFilteringFields("alloy", e.target.value);
-                    }}
-                    //  onKeyDown={(e) => handleSubmitEnter(e)}
-                  />
-                </Select> */}
             </Box>
-          </Box>
-        </div>
-
-        <ListProducts
-          ads={ads}
-          postsPerPage={postsPerPage}
-          currentPage={currentPage}
-        />
+          </Box> */}
       </Stack>
 
       {
@@ -580,14 +484,72 @@ export default function Products() {
         //   />
         // </Stack>
       }
-      <Stack justifyContent="center" py="40px" direction="row" ml="260px">
-        <PaginationCustom
-          postsPerPage={postsPerPage}
-          numOfPages={numOfPages}
-          currentPage={currentPage}
-          handlePageChange={handlePageChange}
-        />
+      <Stack
+        justifyContent="center"
+        py="40px"
+        direction="row"
+        ml={{ xs: "0", md: "260px" }}
+      >
+        {numOfPages === 1 ? null : (
+          <PaginationCustom
+            postsPerPage={postsPerPage}
+            numOfPages={numOfPages}
+            currentPage={currentPage}
+            handlePageChange={handlePageChange}
+          />
+        )}
       </Stack>
+
+      <Box component="filter">
+        <Drawer
+          dir="rtl"
+          anchor="left"
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          SlideProps={{ direction: "left" }}
+          sx={{
+            display: { xs: "block", md: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: "100%",
+            },
+          }}
+        >
+          <Stack direction="row" justifyContent="space-between">
+            <IconButton
+              size="large"
+              // edge="end"
+              color="text"
+              aria-label="open-drawer"
+              onClick={handleDrawerToggle}
+              sx={{ mx: 2 }}
+            >
+              <CloseIcon />
+            </IconButton>
+            <IconButton
+              size="large"
+              // edge="end"
+              color="text"
+              aria-label="open-drawer"
+              onClick={handleDrawerToggle}
+              sx={{ mx: 2 }}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          </Stack>
+
+          <ProductsFilters
+            categoryPage={{ is: false, catId: null }}
+            selectedFields={selectedFields}
+            setSelectedFields={setSelectedFields}
+          />
+        </Drawer>
+      </Box>
+
       {/* <TabContext value={value}>
         <TabList
           dir="rtl"

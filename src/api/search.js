@@ -11,9 +11,17 @@ export function search(searchInput, pageNum, pageSize) {
   );
 }
 
-export function filter(searchInput, pageNum, pageSize) {
+export function filter(searchInput, pageNum, pageSize, selectedFields) {
+  for (let key in selectedFields) {
+    if (selectedFields[key] === "" || selectedFields[key] === null)
+      delete selectedFields[key];
+  }
+  console.log("selectedFields in filter api");
+  console.log(selectedFields);
   return axios.get(
-    `${apiUrl}/products/filter/?type=category&id=${searchInput}&page=${pageNum}&page_size=${pageSize}`
+    `${apiUrl}/products/filter/?filter_by=${JSON.stringify(
+      selectedFields
+    )}&type=category_id=${searchInput}&page=${pageNum}&page_size=${pageSize}`
   );
 }
 export default { search, filter };

@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { Divider, Stack, Tab, Typography } from "@mui/material";
+import {
+  Divider,
+  Stack,
+  Button,
+  Typography,
+  Box,
+  Drawer,
+  IconButton,
+} from "@mui/material";
 import Header from "../components/header";
 import { getAds } from "../api/ads";
 import { styled } from "@mui/material/styles";
 import ListProducts from "../components/listProducts";
-import {
-  useLocation,
-  useNavigate,
-  useNavigation,
-  useParams,
-} from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import searchApi from "../api/search";
 import buttonIcons from "../assets/buttonIcons/ButtonIcons";
 import HomeButton from "../components/homeButton";
 import FilterProduct from "../components/filterProduct";
 import productsApi from "../api/products";
 import Pagination from "../components/pagination";
+import ProductsFilters from "../components/productsFilters";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import CloseIcon from "@mui/icons-material/Close";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export default function SearchResult() {
   const [products, setProducts] = useState([]);
@@ -30,14 +37,34 @@ export default function SearchResult() {
   const [postsPerPage] = useState(20);
   const [numOfPages, setNumOfPages] = useState(1);
 
-  //determine category filter
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  //determine category filter, state true it is categoryPage
   let state = useLocation().state;
-  console.log("state");
-  console.log(state);
+  // console.log("state");
+  // console.log(state);
 
   // for searching is word and for category filter is number
   const { searchInput } = useParams();
-  console.log(searchInput);
+  //console.log(searchInput);
+
+  const [selectedFields, setSelectedFields] = useState({
+    category_id: "",
+    subcategory_id: "",
+    alloy: "",
+    producer: "",
+    supplier: "",
+    mode: "",
+    size: "",
+    color: "",
+    weight: "",
+    height: "",
+    width: "",
+    length: "",
+  });
 
   const fetchSearchResult = async () => {
     const response = await searchApi.search(
@@ -51,7 +78,12 @@ export default function SearchResult() {
     const _ads = JSON.parse(JSON.stringify(response.data.ListItems));
   };
   const fetchFilterResult = async (id) => {
-    const response = await searchApi.filter(id, currentPage, postsPerPage);
+    //id is category_id
+    const response = await searchApi.filter(id, currentPage, postsPerPage, {
+      ...selectedFields,
+      category_id: id,
+    }); // we need to fetch products by category id as soon as the component is mounted, so we shoud set and pass category_id like this
+    console.log(response);
     setNumOfPages(response.data.Item["number of pages"]);
     setProducts(response.data.ListItems);
     setAds(response.data.ListItems);
@@ -92,17 +124,47 @@ export default function SearchResult() {
   const onClickResult = (id) => {
     setCurrentPage(1);
     setCategories([]);
-    fetchFilterResult(id);
+    setSelectedFields({
+      subcategory_id: "",
+      alloy: "",
+      producer: "",
+      supplier: "",
+      mode: "",
+      size: "",
+      color: "",
+      weight: "",
+      height: "",
+      width: "",
+      length: "",
+      category_id: id,
+    });
+    // fetchFilterResult(id);
     fetchSubCategories(id);
+    setSearchIn(id);
   };
 
   useEffect(() => {
     if (state) {
+      setSelectedFields({
+        subcategory_id: "",
+        alloy: "",
+        producer: "",
+        supplier: "",
+        mode: "",
+        size: "",
+        color: "",
+        weight: "",
+        height: "",
+        width: "",
+        length: "",
+        category_id: searchInput,
+      });
       fetchFilterResult(searchInput);
-      fetchSubCategories(searchInput);
+      setSearchIn(searchInput);
+      // fetchSubCategories(searchInput);
     } else {
       fetchSearchResult();
-      fetchCategories();
+      //  fetchCategories();
     }
   }, []);
 
@@ -110,6 +172,17 @@ export default function SearchResult() {
     if (state) fetchFilterResult(searchInput);
     else fetchSearchResult();
   }, [currentPage]);
+
+  useEffect(() => {
+    if (state) {
+      console.log("searchResult->useEffect with selectedField dependency");
+      fetchFilterResult(searchInput);
+      setCurrentPage(1);
+    } else {
+      fetchSearchResult();
+      fetchFilterResult(selectedFields.category_id);
+    }
+  }, [selectedFields]);
 
   // useEffect(() => {
   //   fetchSubCategories(searchInput);
@@ -121,7 +194,7 @@ export default function SearchResult() {
       <Stack
         dir="rtl"
         direction="row"
-        spacing={{ xs: 2, sm: 3.8, lg: 5.5 }}
+        spacing={{ xs: 4, lg: 5.5 }}
         mt={"60px"}
         justifyContent="center"
       >
@@ -139,29 +212,114 @@ export default function SearchResult() {
       <Stack my="60px">
         <Divider />
 
-        <Typography textAlign="left" my="20px" dir="rtl" variant="h3">
+        <Typography
+          textAlign="left"
+          my={{ xs: "10px", md: "20px" }}
+          dir="rtl"
+          variant="h3"
+        >
           {state ? "محصول: " + state.title : "نتیجه جستجو برای: " + searchInput}
         </Typography>
+
         <Stack dir="rtl">
-          {ads.length === 0 ? (
-            <Typography dir="rtl" variant="h3">
-              محصولی یافت نشد!
-            </Typography>
-          ) : (
-            <Stack direction="row">
-              <FilterProduct
-                categories={categories}
-                subCategories={subCategories}
-                onCategory={handleCategorySelect}
-                onSubCategory={handleSubCategorySelect}
-              />
-              <ListProducts
-                ads={ads}
-                postsPerPage={postsPerPage}
-                currentPage={currentPage}
-              />
+          <>
+            <Stack
+              display={{ xs: "flex", md: "none" }}
+              dir="rtl"
+              direction="row"
+              alignItems="center"
+              spacing={1}
+              //sx={{ marginY: "10px" }}
+            >
+              <Button
+                textAlign="left"
+                onClick={handleDrawerToggle}
+                color="text"
+                fontSize="12px"
+                startIcon={<FilterListIcon />}
+              >
+                فیلتر
+              </Button>
             </Stack>
-          )}
+            <Stack direction="row">
+              <Stack
+                width="30%"
+                direction="row"
+                display={{ xs: "none", md: "flex" }}
+              >
+                <ProductsFilters
+                  categoryPage={{ is: !!state, catId: searchIn }}
+                  selectedFields={selectedFields}
+                  setSelectedFields={setSelectedFields}
+                  fetchFilterResult={fetchFilterResult}
+                />
+              </Stack>
+
+              {ads.length === 0 ? (
+                <Stack width="100%">
+                  <Typography dir="rtl" variant="h3">
+                    محصولی یافت نشد!
+                  </Typography>
+                </Stack>
+              ) : (
+                <ListProducts
+                  ads={ads}
+                  postsPerPage={postsPerPage}
+                  currentPage={currentPage}
+                />
+              )}
+            </Stack>
+          </>
+
+          <Box component="filter">
+            <Drawer
+              dir="rtl"
+              anchor="left"
+              variant="temporary"
+              open={mobileOpen}
+              onClose={handleDrawerToggle}
+              ModalProps={{
+                keepMounted: true, // Better open performance on mobile.
+              }}
+              SlideProps={{ direction: "left" }}
+              sx={{
+                display: { xs: "block", md: "none" },
+                "& .MuiDrawer-paper": {
+                  boxSizing: "border-box",
+                  width: "100%",
+                },
+              }}
+            >
+              <Stack direction="row" justifyContent="space-between">
+                <IconButton
+                  size="large"
+                  // edge="end"
+                  color="text"
+                  aria-label="open-drawer"
+                  onClick={handleDrawerToggle}
+                  sx={{ mx: 2 }}
+                >
+                  <CloseIcon />
+                </IconButton>
+                <IconButton
+                  size="large"
+                  // edge="end"
+                  color="text"
+                  aria-label="open-drawer"
+                  onClick={handleDrawerToggle}
+                  sx={{ mx: 2 }}
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+              </Stack>
+
+              <ProductsFilters
+                categoryPage={{ is: false, catId: null }}
+                selectedFields={selectedFields}
+                setSelectedFields={setSelectedFields}
+              />
+            </Drawer>
+          </Box>
 
           {
             <Stack
@@ -169,7 +327,7 @@ export default function SearchResult() {
               justifyContent="center"
               py="40px"
               direction="row"
-              ml="260px"
+              ml={{ xs: "0", md: "260px" }}
             >
               {numOfPages === 1 ? null : (
                 <Pagination
