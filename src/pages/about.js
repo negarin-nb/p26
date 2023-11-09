@@ -41,18 +41,6 @@ export default function About() {
             justifyContent={{ xs: "center", md: "flex-end" }}
             alignItems={{ xs: "center", md: "flex-start" }}
             height={{ md: "100%" }}
-            // sx={{
-            //   xs: {
-            //     justifyContent: "center",
-            //     alignItems: "center",
-            //     // height: "00px",
-            //   },
-            //   sm: {
-            //     justifyContent: "flex-end",
-            //     alignItems: "flex-start",
-            //     height: "400px",
-            //   },
-            // }}
           >
             <Typography
               variant="h2"
