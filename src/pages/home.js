@@ -79,7 +79,7 @@ export default function Home() {
             dir="rtl"
             container
             spacing={{ xs: 2, md: 5 }}
-            columns={{ xs: 12, sm: 8, md: 16 }}
+            columns={{ xs: 12, sm: 8, md: 18 }}
             mt={"25px"}
           >
             {ButtonIcons.map((buttonIcon) => (
