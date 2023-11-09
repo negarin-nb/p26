@@ -6,6 +6,7 @@ import Reba from "../svgIcons/reba";
 import Steel from "../svgIcons/steel";
 import Stud from "../svgIcons/stud";
 import Corner from "../svgIcons/corner";
+import Varagh from "../svgIcons/varagh";
 
 const svgIconStyle = {
   color: "primary.main",
@@ -50,6 +51,14 @@ const buttonIcons = [
     title: "استیل",
     id: 12,
   },
+  {
+    svg: () => (
+      <Varagh viewBox="0 0 300 300" className="svg" sx={svgIconStyle} />
+    ),
+    title: "ورق",
+    id: 12,
+  },
+
   {
     svg: () => <Corner viewBox="0 0 34 34" className="svg" sx={svgIconStyle} />,
     title: "تجهیزات",
