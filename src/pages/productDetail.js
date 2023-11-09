@@ -22,6 +22,7 @@ import BiddingDialog from "../components/dialogs/biddingDialog";
 export default function ProductDetail() {
   const [product, setProduct] = useState({});
   const [biddings, setBiddings] = useState([]);
+  const [owner, setOwner] = useState({});
   const [openBid, setOpenBid] = useState(false);
   const [openLogin, setOpenLogin] = useState(false);
   const [price, setPrice] = useState("");
@@ -76,8 +77,7 @@ export default function ProductDetail() {
 
   const fetchProduct = async (productId) => {
     const response = await productsApi.getProduct(productId);
-    console.log(response.data);
-    //setProduct(response.data.Item);
+
     const _product = {
       ...response.data.Item,
       categoryid: response.data.Item.category.id,
@@ -86,23 +86,13 @@ export default function ProductDetail() {
       subcategorytitle: response.data.Item.subcategory.title,
     };
     setProduct(_product);
+    setOwner(response.data.Item.owner);
     if (response.data.Item.biddings) setBiddings(response.data.Item.biddings);
-    // console.log(product.biddings);
   };
-  // const fetchProfile = async () => {
-  //   const response = await profileApi.getProfile();
-  //   // console.log(response.data);
-  //   // setShopName(response.data.Item.shop_name);
-  //   // profileCtx.setProfile(response.data.Item);
-  // };
+
   useEffect(() => {
     console.log(id);
     fetchProduct(id);
-    // console.log("userProfile");
-    // console.log(profileCtx.userProfile);
-    // if (!profileCtx.userProfile.shopName) {
-    //   fetchProfile();
-    // }
   }, []);
 
   const imageColumn = {
@@ -112,7 +102,7 @@ export default function ProductDetail() {
     alignItems: "center",
   };
   const titleColumn = {
-    paddingInline: "30px",
+    // paddingInline: "30px",
   };
   const sellerColumn = {
     backgroundColor: "custom.main",
@@ -125,7 +115,7 @@ export default function ProductDetail() {
     padding: "30px",
     borderRadius: "5px",
     flexDirction: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     mb: "20px",
   };
   const iconStyle = {
@@ -135,11 +125,15 @@ export default function ProductDetail() {
   };
   const PositionStyle = {
     marginBlock: "15px",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
-    "&:hover": {
-      bgcolor: "custom.main",
-    },
+  };
+  const tableStyle = {
+    width: { xs: "100%", md: "400px" },
+    marginBlock: "15px",
+    justifyContent: "space-between",
+    alignItems: "center",
+    px: { xs: "0", md: "10px" },
   };
 
   return (
@@ -148,12 +142,16 @@ export default function ProductDetail() {
       <Stack dir="rtl">
         <Divider sx={{ paddingTop: "40px" }} />
         <div>
-          <Typography sx={{ textAlign: "left", paddingTop: "20px" }}>
+          <Typography sx={{ textAlign: "left", paddingY: "20px" }}>
             خانه {`>`} {product.categorytitle} {`>`} {product.subcategorytitle}{" "}
             {`>`} {product.title}
           </Typography>
-          <Grid container sx={{ marginBlock: "10px" }}>
-            <Grid item xs={4}>
+          <Grid
+            container
+            spacing={{ xs: 2, md: 3 }}
+            sx={{ marginBlock: "10px" }}
+          >
+            <Grid item xs={12} sm={6} md={4}>
               <Paper elevation={2} sx={imageColumn}>
                 <Stack
                   sx={
@@ -188,7 +186,7 @@ export default function ProductDetail() {
                 </Stack>
               </Paper>
             </Grid>
-            <Grid sx={titleColumn} item xs={4}>
+            <Grid sx={titleColumn} item xs={12} sm={6} md={4}>
               <Stack
                 sx={{
                   justifyContent: "space-between",
@@ -203,7 +201,7 @@ export default function ProductDetail() {
                   variant="h1"
                   sx={{
                     textAlign: "left",
-                    marginTop: "160px",
+                    marginTop: { xs: "30px", sm: "160px" },
                     marginBottom: "45px",
                   }}
                 >
@@ -228,77 +226,85 @@ export default function ProductDetail() {
                 </Button>
               </Stack>
             </Grid>
-            <Grid sx={sellerColumn} item xs={4}>
-              <Typography
-                variant="h2"
-                sx={{
-                  textAlign: "left",
-                  paddingBottom: "10px",
-                  color: "black",
-                }}
-              >
-                فروشنده
-              </Typography>
-              <Stack direction="row" sx={PositionStyle}>
-                <img
-                  style={iconStyle}
-                  src={require("../assets/images/Vector3.png")}
-                />
-                <Box>
-                  <Typography variant="h6">فروشنده : </Typography>
-                </Box>
-              </Stack>
-              <Divider />
-              <Stack direction="row" sx={PositionStyle}>
-                <img
-                  style={iconStyle}
-                  src={require("../assets/images/Vector3.png")}
-                />
-                <Box>
-                  <Typography variant="h6">
-                    محل تحویل: {product.delivery}
-                  </Typography>
-                </Box>
-              </Stack>
-              <Divider />
-              <Stack direction="row" sx={PositionStyle}>
-                <img
-                  style={iconStyle}
-                  src={require("../assets/images/Vector3.png")}
-                />
-                <Box>
-                  <Typography variant="h6">
-                    شماره تماس : {product.tel}
-                  </Typography>
-                </Box>
-              </Stack>
-
-              <Divider />
-              <Stack direction="row" sx={PositionStyle}>
-                <img
-                  style={iconStyle}
-                  src={require("../assets/images/Vector3.png")}
-                />
-                <Box>
-                  <Typography variant="h6">
-                    قیمت فروشنده: {PN.convertEnToPe(product.price)} تومان
-                  </Typography>
-                </Box>
-              </Stack>
-              <Divider />
-
-              <Stack direction="row" sx={PositionStyle}>
-                <img
-                  style={iconStyle}
-                  src={require("../assets/images/Vector3.png")}
-                />
-                <Typography variant="h6">
-                  تاریخ به روزرسانی:
-                  {PN.convertEnToPe(
-                    moment(product.updated_at).format("YYYY/MM/DD")
-                  )}
+            <Grid item xs={12} sm={12} md={4}>
+              <Box sx={sellerColumn}>
+                <Typography
+                  variant="h2"
+                  sx={{
+                    textAlign: "left",
+                    paddingBottom: "10px",
+                    color: "black",
+                  }}
+                >
+                  فروشنده
                 </Typography>
-              </Stack>
+
+                <Stack direction="row" sx={PositionStyle}>
+                  <Stack direction="row">
+                    <img
+                      style={iconStyle}
+                      src={require("../assets/images/Vector3.png")}
+                    />
+                    <Typography variant="h6">فروشنده</Typography>
+                  </Stack>
+                  <Typography variant="h6">{owner.shop_name}</Typography>
+                </Stack>
+                <Divider />
+
+                <Stack direction="row" sx={PositionStyle}>
+                  <Stack direction="row">
+                    <img
+                      style={iconStyle}
+                      src={require("../assets/images/Vector3.png")}
+                    />
+                    <Typography variant="h6"> محل تحویل</Typography>
+                  </Stack>
+                  <Typography variant="h6">{product.delivery}</Typography>
+                </Stack>
+                <Divider />
+
+                <Stack direction="row" sx={PositionStyle}>
+                  <Stack direction="row">
+                    <img
+                      style={iconStyle}
+                      src={require("../assets/images/Vector3.png")}
+                    />
+                    <Typography variant="h6"> شماره تماس </Typography>
+                  </Stack>
+                  <Typography variant="h6">{product.tel}</Typography>
+                </Stack>
+
+                <Divider />
+                <Stack direction="row" sx={PositionStyle}>
+                  <Stack direction="row">
+                    <img
+                      style={iconStyle}
+                      src={require("../assets/images/Vector3.png")}
+                    />
+
+                    <Typography variant="h6">قیمت فروشنده</Typography>
+                  </Stack>
+                  <Typography variant="h6">
+                    {PN.convertEnToPe(product.price)} تومان
+                  </Typography>
+                </Stack>
+                <Divider />
+
+                <Stack direction="row" sx={PositionStyle}>
+                  <Stack direction="row">
+                    <img
+                      style={iconStyle}
+                      src={require("../assets/images/Vector3.png")}
+                    />
+                    <Typography variant="h6">تاریخ به روزرسانی</Typography>
+                  </Stack>
+                  <Typography variant="h6">
+                    {PN.convertEnToPe(
+                      moment(product.updated_at).format("YYYY/MM/DD")
+                    )}
+                  </Typography>
+                </Stack>
+              </Box>
             </Grid>
           </Grid>
         </div>
@@ -329,23 +335,28 @@ export default function ProductDetail() {
           {!!biddings[0] &&
             biddings.map((bidding) => (
               <Stack
-                height="30px"
+                minHeight="30px"
                 key={bidding.id}
                 direction={"row"}
                 sx={sellersRow}
               >
-                <Grid container sx={{ alignItems: "center" }}>
-                  <Grid item xs={1}>
+                <Grid
+                  minHeight="40px"
+                  container
+                  columns={{ xs: 5, md: 10 }}
+                  spacing={{ xs: 4, md: 1 }}
+                  sx={{ alignItems: "center" }}
+                >
+                  <Grid item xs={5} md={1}>
                     <Typography variant="h3" sx={{ textAlign: "left" }}>
                       {bidding.bidder.shop_name}
                     </Typography>
                   </Grid>
-                  <Grid item>
+                  <Grid item xs={5} md={3.5}>
                     <Typography
-                      xs={6}
                       sx={{
-                        width: "340px",
-                        textAlign: "center",
+                        // width: "340px",
+                        textAlign: { xs: "left", md: "center" },
                         color: "black",
                       }}
                       variant="h6"
@@ -354,15 +365,30 @@ export default function ProductDetail() {
                     </Typography>
                   </Grid>
 
-                  <Grid item xs={2}>
-                    <Typography variant="h4" sx={{ color: "secondary.main" }}>
+                  <Grid item xs={2.5} md={1.5}>
+                    <Typography
+                      variant="h4"
+                      sx={{
+                        color: "secondary.main",
+                        textAlign: { xs: "left", md: "center" },
+                      }}
+                    >
                       {PN.convertEnToPe(bidding.price)}
                     </Typography>
                   </Grid>
-                  <Grid item xs={2}>
+                  <Grid
+                    item
+                    xs={2.5}
+                    md={1.5}
+                    display={"flex"}
+                    justifyContent={{ xs: "flex-end", md: "center" }}
+                    alignItems={"center"}
+                    minHeight="70px"
+                    // alignItems={{ xs: "flex-end", md: "center" }}
+                  >
                     {showPhoneNumber[bidding.id] ? (
                       <Typography variant="h5">
-                        {PN.convertEnToPe(bidding.bidder.phone_number)}
+                        {PN.convertEnToPe(bidding.bidder.co_tell)}
                       </Typography>
                     ) : (
                       <Button
@@ -376,8 +402,11 @@ export default function ProductDetail() {
                       </Button>
                     )}
                   </Grid>
-                  <Grid item xs={3}>
-                    <Typography variant="h6">
+                  <Grid item xs={5} md={2.5}>
+                    <Typography
+                      variant="h6"
+                      textAlign={{ xs: "left", md: "center" }}
+                    >
                       آخرین تغییر قیمت فروشگاه:{" "}
                       {PN.convertEnToPe(
                         moment(bidding.updated_at).format("jYYYY/jMM/jDD")
@@ -387,46 +416,6 @@ export default function ProductDetail() {
                 </Grid>
               </Stack>
             ))}
-
-          {/* <Stack direction={"row"} sx={sellersRow}>
-            <Grid container sx={{ alignItems: "center" }}>
-              <Grid item xs={1}>
-                <Typography variant="h3" sx={{ textAlign: "left" }}>
-                  آهنگ
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography
-                  sx={{ width: "340px", textAlign: "left", color: "black" }}
-                  xs={6}
-                  variant="h6"
-                >
-                  تیرآهن 14 ذوب آهن اصفهان 12 متری
-                </Typography>
-              </Grid>
-
-              <Grid item xs={2}>
-                <Typography variant="h4" sx={{ color: "secondary.main" }}>
-                  ۷,۸۰۰,۰۰۰
-                </Typography>
-              </Grid>
-              <Grid item xs={2}>
-                <Button
-                  type="submit"
-                  variant="outlined"
-                  color="primary"
-                  size="small"
-                >
-                  تماس با فروشنده
-                </Button>
-              </Grid>
-              <Grid item xs={3}>
-                <Typography variant="h6">
-                  آخرین تغییر قیمت فروشگاه: دیروز
-                </Typography>
-              </Grid>
-            </Grid>
-          </Stack> */}
         </Stack>
 
         {/* description */}
@@ -451,7 +440,122 @@ export default function ProductDetail() {
               mb: "20px",
             }}
           />
-          <Stack direction={"row"} sx={sellersRow}>
+
+          <Stack sx={sellersRow}>
+            {product.alloy && (
+              <>
+                <Stack direction="row" sx={tableStyle}>
+                  <Typography variant="h6">آلیاژ</Typography>
+                  <Typography variant="body1">{product.alloy}</Typography>
+                </Stack>
+                <Divider sx={{ width: { xs: "100%", md: "420px" } }} />
+              </>
+            )}
+            {product.mode && (
+              <>
+                <Stack direction="row" sx={tableStyle}>
+                  <Typography variant="h6">حالت</Typography>
+                  <Typography variant="body1">{product.mode}</Typography>
+                </Stack>
+                <Divider sx={{ width: { xs: "100%", md: "420px" } }} />
+              </>
+            )}
+            {product.color && (
+              <>
+                <Stack direction="row" sx={tableStyle}>
+                  <Typography variant="h6">رنگ</Typography>
+                  <Typography variant="body1">{product.color}</Typography>
+                </Stack>
+                <Divider sx={{ width: { xs: "100%", md: "420px" } }} />
+              </>
+            )}
+            {product.size && (
+              <>
+                <Stack direction="row" sx={tableStyle}>
+                  <Typography variant="h6">سایز</Typography>
+                  <Typography variant="body1">{product.size}</Typography>
+                </Stack>
+                <Divider sx={{ width: { xs: "100%", md: "420px" } }} />
+              </>
+            )}
+            {product.thickness && (
+              <>
+                <Stack direction="row" sx={tableStyle}>
+                  <Typography variant="h6">ضخامت</Typography>
+                  <Typography variant="body1">{product.thickness}</Typography>
+                </Stack>
+                <Divider sx={{ width: { xs: "100%", md: "420px" } }} />
+              </>
+            )}
+            {product.height && (
+              <>
+                <Stack direction="row" sx={tableStyle}>
+                  <Typography variant="h6">ارتفاع</Typography>
+                  <Typography variant="body1">{product.height}</Typography>
+                </Stack>
+                <Divider sx={{ width: { xs: "100%", md: "420px" } }} />
+              </>
+            )}
+            {product.width && (
+              <>
+                <Stack direction="row" sx={tableStyle}>
+                  <Typography variant="h6">عرض</Typography>
+                  <Typography variant="body1">{product.width}</Typography>
+                </Stack>
+                <Divider sx={{ width: { xs: "100%", md: "420px" } }} />
+              </>
+            )}
+            {product.length && (
+              <>
+                <Stack direction="row" sx={tableStyle}>
+                  <Typography variant="h6">طول</Typography>
+                  <Typography variant="body1">{product.length}</Typography>
+                </Stack>
+                <Divider sx={{ width: { xs: "100%", md: "420px" } }} />
+              </>
+            )}
+            {product.unit && (
+              <>
+                <Stack direction="row" sx={tableStyle}>
+                  <Typography variant="h6">واحد</Typography>
+                  <Typography variant="body1">{product.unit}</Typography>
+                </Stack>
+                <Divider sx={{ width: { xs: "100%", md: "420px" } }} />
+              </>
+            )}
+            {product.weight && (
+              <>
+                <Stack direction="row" sx={tableStyle}>
+                  <Typography variant="h6">وزن</Typography>
+                  <Typography variant="body1">{product.weight}</Typography>
+                </Stack>
+                <Divider sx={{ width: { xs: "100%", md: "420px" } }} />
+              </>
+            )}
+          </Stack>
+        </Stack>
+        <Stack sx={[sellerColumn, { mb: "30px" }]}>
+          <Typography
+            variant="h4"
+            sx={{
+              textAlign: "left",
+              paddingBottom: "10px",
+              color: "black",
+            }}
+          >
+            توضیحات محصول
+          </Typography>
+          <Divider />
+          <Divider
+            sx={{
+              backgroundColor: "secondary.main",
+              width: "72px",
+              height: "2px",
+              mb: "20px",
+            }}
+          />
+
+          <Stack sx={sellersRow}>
             <Typography
               variant="body1"
               sx={{
