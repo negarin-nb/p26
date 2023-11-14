@@ -9,6 +9,7 @@ const theme = createTheme({
       main: "#FF4D00",
     },
     text: {
+      light: "#EDEDED",
       main: "#808080",
     },
     custom: {

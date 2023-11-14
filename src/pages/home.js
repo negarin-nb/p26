@@ -7,6 +7,7 @@ import HomeButton from "../components/homeButton";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import ButtonIcons from "../assets/buttonIcons/ButtonIcons";
 import { LineChart } from "@mui/x-charts/LineChart";
+import Footer from "../components/footer";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default function Home() {
   return (
     <Box>
       <Header />
+
       <Stack
         sx={{
           height: "100vh",

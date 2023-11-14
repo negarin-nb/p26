@@ -1,5 +1,5 @@
 import "./App.css";
-import { Route, Routes, BrowserRouter } from "react-router-dom";
+import { Route, Routes, BrowserRouter, useLocation } from "react-router-dom";
 import Home from "./pages/home";
 
 import { ThemeProvider } from "@mui/material";
@@ -33,6 +33,7 @@ import { AuthProvider } from "./contex/authContext";
 import { ProfileProvider } from "./contex/profileContext";
 import SearchResult from "./pages/searchResults";
 import AdEdit from "./profile/adEdit";
+import Footer from "./components/footer";
 
 function App() {
   // Create rtl cache
@@ -42,12 +43,12 @@ function App() {
   });
   return (
     <div className="App">
-      <Container>
-        <AuthProvider>
-          <ProfileProvider>
-            <CacheProvider value={cacheRtl}>
-              <ThemeProvider theme={theme}>
-                <BrowserRouter>
+      <AuthProvider>
+        <ProfileProvider>
+          <CacheProvider value={cacheRtl}>
+            <ThemeProvider theme={theme}>
+              <BrowserRouter>
+                <Container>
                   <Routes>
                     <Route index element={<Home />} />
 
@@ -82,12 +83,13 @@ function App() {
                     <Route path="*" element={<NoPage />} />
                     <Route path="/" element={<Home />} />
                   </Routes>
-                </BrowserRouter>
-              </ThemeProvider>
-            </CacheProvider>
-          </ProfileProvider>
-        </AuthProvider>
-      </Container>
+                </Container>
+                <Footer />
+              </BrowserRouter>
+            </ThemeProvider>
+          </CacheProvider>
+        </ProfileProvider>
+      </AuthProvider>
     </div>
   );
 }
