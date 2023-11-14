@@ -35,6 +35,8 @@ export default function Contact() {
         </Typography>
       </Stack>
       <Grid
+        minHeight="450px"
+        height="50vh"
         dir="rtl"
         container
         spacing={6}
