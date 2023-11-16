@@ -56,7 +56,7 @@ const buttonIcons = [
       <Varagh viewBox="0 0 300 300" className="svg" sx={svgIconStyle} />
     ),
     title: "ورق",
-    id: 12,
+    id: 3,
   },
 
   {
