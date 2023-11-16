@@ -7,6 +7,7 @@ import {
   Box,
   Drawer,
   IconButton,
+  Grid,
 } from "@mui/material";
 import Header from "../components/header";
 import { getAds } from "../api/ads";
@@ -198,48 +199,71 @@ export default function SearchResult() {
         mt={"60px"}
         justifyContent="center"
       >
-        {buttonIcons.map((buttonIcon) => (
-          <HomeButton
-            svgIcon={buttonIcon.svg}
-            title={buttonIcon.title}
-            id={buttonIcon.id}
-            stateTitle={state ? state.title : null}
-            onClickResult={onClickResult}
-          />
-        ))}
+        <Grid
+          dir="rtl"
+          container
+          spacing={{ xs: 0 }}
+          columns={{ xs: 8, sm: 8, md: 9 }}
+          mt={"25px"}
+          paddingX={{ xs: "0", md: "100px" }}
+        >
+          {buttonIcons.map((buttonIcon) => (
+            <Grid item xs={2} sm={2} md={1} marginBottom="60px">
+              <HomeButton
+                svgIcon={buttonIcon.svg}
+                title={buttonIcon.title}
+                id={buttonIcon.id}
+                stateTitle={state ? state.title : null}
+                onClickResult={onClickResult}
+              />
+            </Grid>
+          ))}
+        </Grid>
       </Stack>
 
-      <Stack my="60px">
+      <Stack marginBottom="20px">
         <Divider />
-
-        <Typography
-          textAlign="left"
-          my={{ xs: "10px", md: "20px" }}
-          dir="rtl"
-          variant="h3"
-        >
-          {state ? "محصول: " + state.title : "نتیجه جستجو برای: " + searchInput}
-        </Typography>
 
         <Stack dir="rtl">
           <>
             <Stack
-              display={{ xs: "flex", md: "none" }}
+              bgcolor="custom.main"
               dir="rtl"
               direction="row"
+              justifyContent="space-between"
               alignItems="center"
               spacing={1}
+              my={{ xs: "10px", md: "10px" }}
+              mb={{ xs: "5px", md: "10px" }}
+              mt={{ xs: "10px", md: "10px" }}
               //sx={{ marginY: "10px" }}
             >
-              <Button
+              <Typography
+                bgcolor="custom.main"
+                p="10px"
                 textAlign="left"
-                onClick={handleDrawerToggle}
-                color="text"
-                fontSize="12px"
-                startIcon={<FilterListIcon />}
+                mb={{ xs: "0", md: "10px" }}
+                mt={{ xs: "10px", md: "10px" }}
+                dir="rtl"
+                variant="h3"
               >
-                فیلتر
-              </Button>
+                {state
+                  ? "محصول: " + state.title
+                  : "نتیجه جستجو برای: " + searchInput}
+              </Typography>
+              <Box display={{ xs: "block", md: "none" }}>
+                <Button
+                  width="50px"
+                  //variant="outlined"
+                  textAlign="left"
+                  onClick={handleDrawerToggle}
+                  color="text"
+                  fontSize="12px"
+                  startIcon={<FilterListIcon />}
+                >
+                  فیلتر
+                </Button>
+              </Box>
             </Stack>
             <Stack direction="row">
               <Stack

@@ -23,19 +23,24 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 export default function Footer() {
   let { pathname } = useLocation();
 
-  // const classes = useStyles();
-
   return (
     <>
       {pathname === "/" ||
       pathname === "/profile" ||
+      pathname === "/profile/dashboard" ||
+      pathname === "/profile/subscription" ||
+      pathname === "/profile/ads" ||
+      pathname === "/profile/edit-ad" ||
+      pathname === "/profile/insert-ad" ||
+      pathname === "/profile/support" ||
+      pathname === "/profile/profile-info" ||
       pathname === "/register" ||
       pathname === "/login" ? null : (
         <Stack dir="rtl" bgcolor={"text.light"} mt="50px">
           <Container>
             <Grid
-              paddingY="50px"
-              height={"250px"}
+              paddingY={{ xs: "20px", md: "50px" }}
+              height={{ xs: "280px", md: "250px" }}
               container
               spacing="2"
               columns={{ xs: 2, md: 12 }}
@@ -94,19 +99,33 @@ export default function Footer() {
                 </Stack>
               </Grid>
               <Grid item xs={1} md={3}>
-                <Stack alignItems="flex-start" px="10px"></Stack>
+                <Stack px="10px"></Stack>
               </Grid>
               <Grid item xs={1} md={3}>
-                <Stack alignItems="flex-start" px="10px"></Stack>
+                <Stack px="10px"></Stack>
               </Grid>
-              <Grid component={Link} href="/" item xs={1} md={2}>
-                <img src={enamad} />
+              <Grid
+                component={Link}
+                href="/"
+                item
+                xs={1}
+                md={2}
+                //  display="flex"
+
+                //  padding={{ xs: "0px", md: "0" }}
+              >
+                <Stack justifyContent="flex-end" alignItems="flex-end">
+                  <img
+                    src={enamad}
+                    style={{ height: "136px", width: "125px" }}
+                  />
+                </Stack>
               </Grid>
             </Grid>
             <Divider />
 
             <Stack justifyContent="center">
-              <Typography my="20px" variant="body2" color="textSecondary">
+              <Typography my="15px" variant="body2" color="textSecondary">
                 حقوق این سایت محفوظ است.{" "}
               </Typography>
             </Stack>

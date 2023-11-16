@@ -168,7 +168,7 @@ export default function Products() {
           />
         </Paper>
       </Stack>
-      <Divider sx={{ marginBottom: "20px" }} />
+      <Divider sx={{ marginBottom: { xs: "10px", md: "20px" } }} />
       <Stack
         display={{ xs: "flex", md: "none" }}
         dir="rtl"
@@ -178,6 +178,7 @@ export default function Products() {
         sx={{ marginBottom: "10px" }}
       >
         <Button
+          variant="outlined"
           onClick={handleDrawerToggle}
           color="text"
           fontSize="12px"
