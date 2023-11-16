@@ -169,7 +169,9 @@ export default function Ads() {
                       },
                     }}
                   >
-                    {product.title}
+                    {product.title.length <= 18
+                      ? product.title
+                      : product.title.substr(0, 18) + "..."}
                   </BodyTableCell>
                   <BodyTableCell
                     sx={{ display: { xs: "none", md: "table-cell" } }}
