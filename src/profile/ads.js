@@ -13,6 +13,7 @@ import {
   Divider,
   Snackbar,
   Alert,
+  IconButton,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -23,6 +24,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Link } from "react-router-dom";
 import profileApi from "../api/profile";
 import moment from "jalali-moment";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 export default function Ads() {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -104,9 +106,30 @@ export default function Ads() {
   return (
     <>
       {/* <ListProducts ads={products} /> */}
-      <Typography sx={titleStyle} variant="h3">
-        آگهی‌ها
-      </Typography>
+      <Stack direction="row" justifyContent="flex-end" alignItems="center">
+        <Typography sx={titleStyle} variant="h3">
+          آگهی‌ها
+        </Typography>
+        <IconButton
+          component={Link}
+          to="/profile"
+          color="primary"
+          sx={{
+            marginBlock: "10px",
+            mr: "10px",
+            display: { xs: "flex", md: "none" },
+          }}
+        >
+          <ArrowForwardIcon fontSize="small" />
+        </IconButton>
+      </Stack>
+      <Divider
+        sx={{
+          marginBottom: "20px",
+          display: { xs: "flex", md: "none" },
+        }}
+      />
+
       <Stack dir="rtl" direction="row">
         <TableContainer>
           <Table>
@@ -114,10 +137,22 @@ export default function Ads() {
               <TableRow>
                 <StyledTableCell style={{ width: "5%" }}>ردیف</StyledTableCell>
                 <StyledTableCell>نام</StyledTableCell>
-                <StyledTableCell>عرضه‌کننده</StyledTableCell>
-                <StyledTableCell>تولیدکننده</StyledTableCell>
+                <StyledTableCell
+                  sx={{ display: { xs: "none", md: "table-cell" } }}
+                >
+                  عرضه‌کننده
+                </StyledTableCell>
+                <StyledTableCell
+                  sx={{ display: { xs: "none", md: "table-cell" } }}
+                >
+                  تولیدکننده
+                </StyledTableCell>
                 <StyledTableCell>قیمت</StyledTableCell>
-                <StyledTableCell>تاریخ به روز رسانی</StyledTableCell>
+                <StyledTableCell
+                  sx={{ display: { xs: "none", md: "table-cell" } }}
+                >
+                  تاریخ به روز رسانی
+                </StyledTableCell>
                 <StyledTableCell>مشاهده</StyledTableCell>
                 <StyledTableCell>ویرایش</StyledTableCell>
                 <StyledTableCell>حذف</StyledTableCell>
@@ -136,13 +171,23 @@ export default function Ads() {
                   >
                     {product.title}
                   </BodyTableCell>
-                  <BodyTableCell>{product.supplier}</BodyTableCell>
-                  <BodyTableCell>{product.producer}</BodyTableCell>
+                  <BodyTableCell
+                    sx={{ display: { xs: "none", md: "table-cell" } }}
+                  >
+                    {product.supplier}
+                  </BodyTableCell>
+                  <BodyTableCell
+                    sx={{ display: { xs: "none", md: "table-cell" } }}
+                  >
+                    {product.producer}
+                  </BodyTableCell>
                   <BodyTableCell>
                     {PN.convertEnToPe(product.price)}
                   </BodyTableCell>
 
-                  <BodyTableCell>
+                  <BodyTableCell
+                    sx={{ display: { xs: "none", md: "table-cell" } }}
+                  >
                     {PN.convertEnToPe(
                       moment(product.updated_at).format("YYYY/MM/DD")
                     )}

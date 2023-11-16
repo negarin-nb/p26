@@ -7,9 +7,13 @@ import {
   Grid,
   Snackbar,
   Alert,
+  IconButton,
+  Divider,
 } from "@mui/material";
 import { useProfile } from "../contex/profileContext";
 import profileApi from "../api/profile";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { Link } from "react-router-dom";
 
 export default function ProfileInfo() {
   const [profile, setProfile] = useState({
@@ -100,6 +104,31 @@ export default function ProfileInfo() {
 
   return (
     <>
+      <Stack
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="center"
+        display={{ xs: "flex", md: "none" }}
+      >
+        <Typography variant="h3">اطلاعات حساب کاربری</Typography>
+        <IconButton
+          component={Link}
+          to={"/profile"}
+          color="primary"
+          sx={{
+            marginBlock: "10px",
+            mr: "10px",
+          }}
+        >
+          <ArrowForwardIcon fontSize="small" />
+        </IconButton>
+      </Stack>
+      <Divider
+        sx={{
+          marginBottom: "20px",
+          display: { xs: "flex", md: "none" },
+        }}
+      />
       <form>
         {/* <Stack  direction="row" spacing={5} > */}
         <Typography sx={titleStyle} variant="h3">

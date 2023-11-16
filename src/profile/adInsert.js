@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   TextField,
   Button,
-  Paper,
+  IconButton,
   Typography,
   Stack,
   Grid,
@@ -13,10 +13,14 @@ import {
   Snackbar,
   Alert,
   Autocomplete,
+  Divider,
 } from "@mui/material";
+import { Link } from "react-router-dom";
+
 import productsApi from "../api/products";
 import profileApi from "../api/profile";
 import PN from "persian-number";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 export default function AdInsert({ editData }) {
   const [productList, setProductList] = useState([{}]);
@@ -317,11 +321,35 @@ export default function AdInsert({ editData }) {
 
   return (
     <>
-      <form>
+      <Stack
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="center"
+        display={{ xs: "flex", md: "none" }}
+      >
         <Typography sx={titleStyle} variant="h3">
           {editData ? "ویرایش آگهی" : "درج آگهی"}
         </Typography>
+        <IconButton
+          component={Link}
+          to={editData ? "/profile/ads" : "/profile"}
+          color="primary"
+          sx={{
+            marginBlock: "10px",
+            mr: "10px",
+          }}
+        >
+          <ArrowForwardIcon fontSize="small" />
+        </IconButton>
+      </Stack>
+      <Divider
+        sx={{
+          marginBottom: "20px",
+          display: { xs: "flex", md: "none" },
+        }}
+      />
 
+      <form>
         <Grid sx={inputStyle} dir="rtl" container spacing={2}>
           <Grid container item xs={6} direction="column">
             <TextField

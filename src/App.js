@@ -34,6 +34,7 @@ import { ProfileProvider } from "./contex/profileContext";
 import SearchResult from "./pages/searchResults";
 import AdEdit from "./profile/adEdit";
 import Footer from "./components/footer";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 function App() {
   // Create rtl cache
@@ -41,6 +42,8 @@ function App() {
     key: "muirtl",
     stylisPlugins: [prefixer, rtlPlugin],
   });
+  const matches = useMediaQuery("(min-width:899px)");
+
   return (
     <div className="App">
       <AuthProvider>
@@ -66,18 +69,44 @@ function App() {
                       path="product-detail/:id"
                       element={<ProductDetail />}
                     />
-                    <Route path="profile" element={<Profile />}>
-                      <Route index element={<Dashboard />} />
-                      <Route path="dashboard" element={<Dashboard />} />
-                      <Route path="marked" element={<Marked />} />
-                      <Route path="subscription" element={<Subscription />} />
-                      <Route path="ads" element={<Ads />} />
-                      <Route path="edit-ad" element={<AdEdit />} />
 
-                      <Route path="insert-ad" element={<AdInsert />} />
-                      <Route path="support" element={<Support />} />
-                      <Route path="profile-info" element={<ProfileInfo />} />
-                    </Route>
+                    {matches ? (
+                      <Route path="profile" element={<Profile />}>
+                        <Route index element={<Dashboard />} />
+                        <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="marked" element={<Marked />} />
+                        <Route path="subscription" element={<Subscription />} />
+                        <Route path="ads" element={<Ads />} />
+                        <Route path="edit-ad" element={<AdEdit />} />
+                        <Route path="insert-ad" element={<AdInsert />} />
+                        <Route path="support" element={<Support />} />
+                        <Route path="profile-info" element={<ProfileInfo />} />
+                      </Route>
+                    ) : (
+                      <>
+                        <Route path="profile" element={<Profile />} />
+                        <Route
+                          path="profile/dashboard"
+                          element={<Dashboard />}
+                        />
+                        <Route path="profile/marked" element={<Marked />} />
+                        <Route
+                          path="profile/subscription"
+                          element={<Subscription />}
+                        />
+                        <Route path="profile/ads" element={<Ads />} />
+                        <Route path="profile/edit-ad" element={<AdEdit />} />
+                        <Route
+                          path="profile/insert-ad"
+                          element={<AdInsert />}
+                        />
+                        <Route path="profile/support" element={<Support />} />
+                        <Route
+                          path="profile/profile-info"
+                          element={<ProfileInfo />}
+                        />
+                      </>
+                    )}
                     <Route path="profile/insert-ad" element={<AdInsert />} />
                     <Route path="home" element={<Home />} />
                     <Route path="*" element={<NoPage />} />

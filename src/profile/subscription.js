@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
-import { Grid, Paper, Stack, Typography, Button, Divider } from "@mui/material";
+import {
+  Grid,
+  Paper,
+  Stack,
+  Typography,
+  Button,
+  Divider,
+  IconButton,
+} from "@mui/material";
 import subscrptionApi from "../api/subscrption";
 import moment from "jalali-moment";
 import PN from "persian-number";
@@ -10,6 +18,9 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { LineChart } from "@mui/x-charts/LineChart";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { Link } from "react-router-dom";
+
 export default function Subscription() {
   const [adSubscription, setAdSubscription] = useState([]);
   const [callSubscription, setCallSubscription] = useState([]);
@@ -100,6 +111,32 @@ export default function Subscription() {
   const cardTitle = { color: "white", marginBlock: "20px" };
   return (
     <>
+      <Stack
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="center"
+        display={{ xs: "flex", md: "none" }}
+      >
+        <Typography variant="h3">اشتراک</Typography>
+        <IconButton
+          component={Link}
+          to="/profile"
+          color="primary"
+          sx={{
+            marginBlock: "10px",
+            mr: "10px",
+          }}
+        >
+          <ArrowForwardIcon fontSize="small" />
+        </IconButton>
+      </Stack>
+      <Divider
+        sx={{
+          marginBottom: "20px",
+          display: { xs: "flex", md: "none" },
+        }}
+      />
+
       <Typography sx={{ textAlign: "left", marginTop: "20px" }} variant="h2">
         اعتبار اشتراک آگهی : {PN.convertEnToPe(timeCredit)} روز
       </Typography>

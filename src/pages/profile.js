@@ -9,6 +9,7 @@ import { useAuth } from "../contex/authContext";
 import { useProfile } from "../contex/profileContext";
 import profileApi from "../api/profile";
 import PN from "persian-number";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
 export default function Profile() {
   const authCtx = useAuth();
@@ -78,13 +79,22 @@ export default function Profile() {
       <Divider sx={{ marginTop: "40px" }} />
       <Paper sx={ContainerStyle} elevation={5}>
         <Grid container sx={{}} spacing={0}>
-          <Grid item xs={6} md={9} sx={{ paddingLeft: "5px", height: "100%" }}>
-            <Box sx={[ColumnStyle, { height: "600px", overflow: "auto" }]}>
+          <Grid item xs={0} md={9} sx={{ paddingLeft: "5px", height: "100%" }}>
+            <Box
+              sx={[
+                ColumnStyle,
+                {
+                  height: "600px",
+                  overflow: "auto",
+                  display: { xs: "none", md: "block" },
+                },
+              ]}
+            >
               <Outlet />
             </Box>
           </Grid>
 
-          <Grid item xs={6} md={3}>
+          <Grid item xs={12} md={3}>
             <Stack
               direction="row"
               sx={[ColumnStyle, { justifyContent: "flex-end", mb: "5px" }]}
@@ -112,11 +122,17 @@ export default function Profile() {
                 component={Link}
                 to="dashboard"
               >
-                <Box>
+                <Stack
+                  width="100%"
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <ChevronLeftIcon color="text" />
                   <Typography underline="none" variant="body1">
                     پیشخوان
                   </Typography>
-                </Box>
+                </Stack>
                 <img
                   style={iconStyle}
                   src={require("../assets/images/Vector.png")}
@@ -129,9 +145,15 @@ export default function Profile() {
                 component={Link}
                 to="subscription"
               >
-                <Box>
+                <Stack
+                  width="100%"
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <ChevronLeftIcon color="text" />
                   <Typography variant="body1"> اشتراک</Typography>
-                </Box>
+                </Stack>
                 <img
                   style={iconStyle}
                   src={require("../assets/images/Vector2.png")}
@@ -143,9 +165,15 @@ export default function Profile() {
                 component={Link}
                 to="ads"
               >
-                <Box>
+                <Stack
+                  width="100%"
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <ChevronLeftIcon color="text" />
                   <Typography variant="body1">آگهی‌ها</Typography>
-                </Box>
+                </Stack>
                 <img
                   style={iconStyle}
                   src={require("../assets/images/Vector3.png")}
@@ -157,9 +185,15 @@ export default function Profile() {
                 component={Link}
                 to="insert-ad"
               >
-                <Box>
+                <Stack
+                  width="100%"
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <ChevronLeftIcon color="text" />
                   <Typography variant="body1"> درج آگهی </Typography>
-                </Box>
+                </Stack>
                 <img
                   style={iconStyle}
                   src={require("../assets/images/Vector4.png")}
@@ -171,9 +205,15 @@ export default function Profile() {
                 component={Link}
                 to="support"
               >
-                <Box>
+                <Stack
+                  width="100%"
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <ChevronLeftIcon color="text" />
                   <Typography variant="body1">پشتیبانی</Typography>
-                </Box>
+                </Stack>
                 <img
                   style={iconStyle}
                   src={require("../assets/images/Vector5.png")}
@@ -186,9 +226,15 @@ export default function Profile() {
                 component={Link}
                 to="profile-info"
               >
-                <Box>
-                  <Typography variant="body1"> حساب کاربری</Typography>
-                </Box>
+                <Stack
+                  width="100%"
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <ChevronLeftIcon color="text" />
+                  <Typography variant="body1">اطلاعات حساب کاربری</Typography>
+                </Stack>
                 <img
                   style={iconStyle}
                   src={require("../assets/images/Vector6.png")}
