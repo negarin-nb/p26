@@ -48,7 +48,7 @@ export default function Home() {
             display: "flex",
             alignItems: "center",
             width: {
-              xs: "100%",
+              xs: "90%",
               sm: 500,
               md: 630,
               lg: 630,

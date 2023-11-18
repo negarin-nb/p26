@@ -36,7 +36,7 @@ export default function Contact() {
       </Stack>
       <Grid
         minHeight="450px"
-        height="50vh"
+        height={{ xs: "100%", md: "50vh" }}
         dir="rtl"
         container
         spacing={6}
