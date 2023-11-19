@@ -20,6 +20,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { LineChart } from "@mui/x-charts/LineChart";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Link } from "react-router-dom";
+import { CacheProvider } from "@emotion/react";
+import createCache from "@emotion/cache";
 
 export default function Subscription() {
   const [adSubscription, setAdSubscription] = useState([]);
@@ -28,6 +30,13 @@ export default function Subscription() {
   const [timeCredit, setTimeCredit] = useState("");
   const [buyId, setBuyId] = useState();
   const [open, setOpen] = useState(false);
+  const [report, setReport] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+  const unit = "تومان";
+
+  const cacheLtr = createCache({
+    key: "muirtl",
+    stylisPlugins: null,
+  });
 
   const handleBuySubscription = (id) => {
     setOpen(true);
@@ -77,6 +86,18 @@ export default function Subscription() {
     setTimeCredit(numDays);
   };
 
+  const fetchReport = async () => {
+    const response = await subscrptionApi.getReport();
+    console.log(response.data.ListItems);
+    //const reportArray = response.data.ListItems;
+    // console.log(reportArray);
+    const _report = response.data.ListItems.map((k) =>
+      Object.values(k)[0] === null ? 0 : Object.values(k)[0]
+    );
+    setReport(_report);
+    console.log(_report);
+  };
+
   const buySubscription = async (id) => {
     const response = await subscrptionApi.buyPack(id);
     fetchWallet();
@@ -87,9 +108,20 @@ export default function Subscription() {
     fetchPacks();
     console.log(adSubscription);
     fetchWallet();
+    fetchReport();
     // console.log(credit);
     //  console.log(timeCredit);
   }, []);
+
+  // useEffect(() => {
+  //   //console.log("hello");
+
+  //   //console.log(Object.values(report[k])[0]);
+  //   // const keys = report.map((k) =>
+  //   //   Object.values(k)[0] === null ? 0 : Object.values(k)[0]
+  //   // );
+  //   console.log(report);
+  // }, [report]);
 
   const iconStyle = {
     width: "20px",
@@ -101,7 +133,7 @@ export default function Subscription() {
   };
 
   const valueFormatter = (num) => {
-    return ` ${PN.convertEnToPe(num)} `;
+    return ` ${PN.convertEnToPe(num)}`;
   };
 
   const chartsParams = {
@@ -145,31 +177,48 @@ export default function Subscription() {
       </Typography>
       <Divider sx={{ marginTop: "30px" }} />
       <Stack alignItems="center">
-        <LineChart
-          xAxis={[
-            {
-              scaleType: "band",
-              data: ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور"],
-            },
-          ]}
-          yAxis={[
-            {
-              valueFormatter,
-              data: [0, 200000, 550000, 200000, 850000, 150000, 500000],
-            },
-          ]}
-          series={[
-            {
-              valueFormatter,
-              color: "#FF4D00",
-              curve: "catmullRom",
-              data: [200000, 550000, 200000, 850000, 150000, 500000],
-            },
-          ]}
-          {...chartsParams}
-          margin={{ top: 40, bottom: 30, left: 50, right: 10 }}
-          height={300}
-        />
+        <CacheProvider value={cacheLtr}>
+          <LineChart
+            //sx={{ direction: "ltr" }}
+            // dir="ltr"
+            xAxis={[
+              {
+                scaleType: "band",
+                data: [
+                  "فروردین",
+                  "اردیبهشت",
+                  "خرداد",
+                  "تیر",
+                  "مرداد",
+                  "شهریور",
+                  "مهر",
+                  "آبان",
+                  "آذر",
+                  "دی",
+                  "بهمن",
+                  "اسفند",
+                ],
+              },
+            ]}
+            yAxis={[
+              {
+                valueFormatter,
+                data: [...report],
+              },
+            ]}
+            series={[
+              {
+                valueFormatter,
+                color: "#FF4D00",
+                curve: "catmullRom",
+                data: [...report],
+              },
+            ]}
+            {...chartsParams}
+            margin={{ top: 40, bottom: 30, left: 90, right: 10 }}
+            height={300}
+          />
+        </CacheProvider>
       </Stack>
       <Divider sx={{ marginBlock: "30px" }} />
       <Typography sx={{ textAlign: "left", marginBlock: "20px" }} variant="h2">
@@ -283,6 +332,8 @@ export default function Subscription() {
                     onClick={() => {
                       console.log(buyId);
                       buySubscription(buyId);
+                      handleClose();
+                      fetchReport();
                     }}
                   >
                     بله

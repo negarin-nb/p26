@@ -19,4 +19,8 @@ export function buyPack(id) {
   });
 }
 
-export default { getPacks, buyPack, getWallet };
+export function getReport() {
+  return axios.get(`${apiUrl}/wallets/SubscriptionReport/`);
+}
+
+export default { getPacks, buyPack, getWallet, getReport };
